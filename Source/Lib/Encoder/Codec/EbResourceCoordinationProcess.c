@@ -112,9 +112,15 @@ EbErrorType signal_derivation_pre_analysis_oq(
     picture_control_set_ptr->tf_enable_hme_level0_flag = tf_enable_hme_level0_flag[0][input_resolution][hme_me_level] || tf_enable_hme_level0_flag[1][input_resolution][hme_me_level];
     picture_control_set_ptr->tf_enable_hme_level1_flag = tf_enable_hme_level1_flag[0][input_resolution][hme_me_level] || tf_enable_hme_level1_flag[1][input_resolution][hme_me_level];
     picture_control_set_ptr->tf_enable_hme_level2_flag = tf_enable_hme_level2_flag[0][input_resolution][hme_me_level] || tf_enable_hme_level2_flag[1][input_resolution][hme_me_level];
-
-    if (picture_control_set_ptr->enc_mode >= ENC_M8)
+    if (sequence_control_set_ptr->static_config.enable_restoration_filtering == -1) {
+        if (picture_control_set_ptr->enc_mode >= ENC_M8)
+            sequence_control_set_ptr->seq_header.enable_restoration = 0;
+    }
+    else if(sequence_control_set_ptr->static_config.enable_restoration_filtering == 0)
         sequence_control_set_ptr->seq_header.enable_restoration = 0;
+    else if(sequence_control_set_ptr->static_config.enable_restoration_filtering == 1)
+        sequence_control_set_ptr->seq_header.enable_restoration = 0;
+
     sequence_control_set_ptr->cdf_mode = (picture_control_set_ptr->enc_mode <= ENC_M6) ? 0 : 1;
     return return_error;
 }

@@ -2106,6 +2106,9 @@ void CopyApiFromApp(
     // Global motion
     sequence_control_set_ptr->static_config.enable_global_motion = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_global_motion;
 
+    // Restoration filtering
+    sequence_control_set_ptr->static_config.enable_restoration_filtering = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_restoration_filtering;
+
     // OBMC
     sequence_control_set_ptr->static_config.enable_obmc = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_obmc;
 
@@ -2637,6 +2640,7 @@ EbErrorType eb_svt_enc_init_parameter(
     config_ptr->disable_dlf_flag = EB_FALSE;
     config_ptr->enable_warped_motion = EB_TRUE;
     config_ptr->enable_global_motion = EB_TRUE;
+    config_ptr->enable_restoration_filtering = -1;
     config_ptr->enable_obmc = EB_TRUE;
     config_ptr->enable_filter_intra = EB_TRUE;
     config_ptr->in_loop_me_flag = EB_TRUE;

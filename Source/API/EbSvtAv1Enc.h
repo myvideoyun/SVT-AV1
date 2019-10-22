@@ -230,6 +230,11 @@ typedef struct EbSvtAv1EncConfiguration
     * Default is 1. */
     EbBool                   enable_global_motion;
 
+    /* Restoration filtering
+    *
+    * Default is 1. */
+    int8_t                   enable_restoration_filtering;
+
     /* OBMC
     *
     * Default is 1. */
