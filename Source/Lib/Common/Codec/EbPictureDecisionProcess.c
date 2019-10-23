@@ -1257,18 +1257,28 @@ EbErrorType signal_derivation_multi_processes_oq(
         // Set atb mode      Settings
         // 0                 OFF: no transform partitioning
         // 1                 ON for INTRA blocks
+        if (sequence_control_set_ptr->static_config.enable_atb == AUTO_MODE) {
 #if ATB_10_BIT
-        if (picture_control_set_ptr->enc_mode <= ENC_M1 &&  !sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
+          if (picture_control_set_ptr->enc_mode <= ENC_M1 &&
+              !sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
 #else
-        if (picture_control_set_ptr->enc_mode <= ENC_M1 && sequence_control_set_ptr->static_config.encoder_bit_depth == EB_8BIT)
+          if (picture_control_set_ptr->enc_mode <= ENC_M1 &&
+              sequence_control_set_ptr->static_config.encoder_bit_depth ==
+                  EB_8BIT)
 #endif
+
 #if SPEED_OPT
-            picture_control_set_ptr->atb_mode = (MR_MODE || picture_control_set_ptr->temporal_layer_index == 0) ? 1 : 0;
+            picture_control_set_ptr->atb_mode =
+                (MR_MODE || picture_control_set_ptr->temporal_layer_index == 0)
+                    ? 1
+                    : 0;
 #else
             picture_control_set_ptr->atb_mode = 1;
 #endif
-        else
+          else
             picture_control_set_ptr->atb_mode = 0;
+        } else
+            picture_control_set_ptr->atb_mode = sequence_control_set_ptr->static_config.enable_atb;
 
         // Set skip atb                          Settings
         // 0                                     OFF
@@ -1283,20 +1293,24 @@ EbErrorType signal_derivation_multi_processes_oq(
         else
             picture_control_set_ptr->coeff_based_skip_atb = 1;
 
-        // Set Wedge mode      Settings
-        // 0                 FULL: Full search
-        // 1                 Fast: If two predictors are very similar, skip wedge compound mode search
-        // 2                 Fast: estimate Wedge sign
-        // 3                 Fast: Mode 1 & Mode 2
+            // Set Wedge mode      Settings
+            // 0                 FULL: Full search
+            // 1                 Fast: If two predictors are very similar, skip wedge compound mode search
+            // 2                 Fast: estimate Wedge sign
+            // 3                 Fast: Mode 1 & Mode 2
 
-        picture_control_set_ptr->wedge_mode = 0;
+            picture_control_set_ptr->wedge_mode = 0;
 
+        if (sequence_control_set_ptr->static_config.inter_intra_compound == AUTO_MODE)
 #if II_COMP_FLAG
-        // inter intra pred                      Settings
-        // 0                                     OFF
-        // 1                                     ON
+            // inter intra pred                      Settings
+            // 0                                     OFF
+            // 1                                     ON
             picture_control_set_ptr->enable_inter_intra = picture_control_set_ptr->slice_type != I_SLICE ? sequence_control_set_ptr->seq_header.enable_interintra_compound : 0;
 #endif
+        else
+
+            picture_control_set_ptr->enable_inter_intra = sequence_control_set_ptr->static_config.inter_intra_compound;
         // Set compound mode      Settings
         // 0                 OFF: No compond mode search : AVG only
         // 1                 ON: compond mode search: AVG/DIST/DIFF
@@ -1312,18 +1326,25 @@ EbErrorType signal_derivation_multi_processes_oq(
             picture_control_set_ptr->compound_types_to_try = picture_control_set_ptr->compound_mode == 1 ? MD_COMP_DIFF0 : MD_COMP_WEDGE;
         else
             picture_control_set_ptr->compound_types_to_try = MD_COMP_AVG;
+        if (sequence_control_set_ptr->static_config.frame_end_cdf_update == AUTO_MODE)
+            // Set frame end cdf update mode      Settings
+            // 0                                     OFF
+            // 1                                     ON
+            if (picture_control_set_ptr->enc_mode == ENC_M0)
+                picture_control_set_ptr->frame_end_cdf_update_mode = 1;
+            else
+                picture_control_set_ptr->frame_end_cdf_update_mode = 0;
+        else
+            picture_control_set_ptr->frame_end_cdf_update_mode = sequence_control_set_ptr->static_config.frame_end_cdf_update;
 
-        // Set frame end cdf update mode      Settings
-        // 0                                     OFF
-        // 1                                     ON
-        if (picture_control_set_ptr->enc_mode == ENC_M0)
-            picture_control_set_ptr->frame_end_cdf_update_mode = 1;
+        if (sequence_control_set_ptr->static_config.prune_unipred_me == AUTO_MODE)
+            if (picture_control_set_ptr->sc_content_detected || picture_control_set_ptr->enc_mode == ENC_M0 || picture_control_set_ptr->enc_mode >= ENC_M4)
+                picture_control_set_ptr->prune_unipred_at_me = 0;
+            else
+                picture_control_set_ptr->prune_unipred_at_me = 1;
         else
-            picture_control_set_ptr->frame_end_cdf_update_mode = 0;
-        if (picture_control_set_ptr->sc_content_detected || picture_control_set_ptr->enc_mode == ENC_M0 || picture_control_set_ptr->enc_mode >= ENC_M4)
-            picture_control_set_ptr->prune_unipred_at_me = 0;
-        else
-            picture_control_set_ptr->prune_unipred_at_me = 1;
+            picture_control_set_ptr->prune_unipred_at_me = sequence_control_set_ptr->static_config.prune_unipred_me;
+
         //CHKN: Temporal MVP should be disabled for pictures beloning to 4L MiniGop preceeded by 5L miniGOP. in this case the RPS is wrong(known issue). check RPS construction for more info.
         if ((sequence_control_set_ptr->static_config.hierarchical_levels == 4 && picture_control_set_ptr->hierarchical_levels == 3) ||
             picture_control_set_ptr->slice_type == I_SLICE)

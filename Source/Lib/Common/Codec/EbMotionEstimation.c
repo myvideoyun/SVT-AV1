@@ -13668,9 +13668,10 @@ EbErrorType motion_estimate_lcu(
          picture_control_set_ptr->nsq_search_level < NSQ_SEARCH_FULL)
             ? EB_TRUE
             : EB_FALSE;
-
-    is_nsq_table_used = picture_control_set_ptr->enc_mode == ENC_M0 ?  EB_FALSE : is_nsq_table_used;
-
+    if (sequence_control_set_ptr->static_config.nsq_table == AUTO_MODE)
+        is_nsq_table_used = picture_control_set_ptr->enc_mode == ENC_M0 ? EB_FALSE : is_nsq_table_used;
+    else
+        is_nsq_table_used = sequence_control_set_ptr->static_config.nsq_table;
     if (context_ptr->me_alt_ref == EB_TRUE)
         numOfListToSearch = 0;
 

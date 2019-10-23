@@ -112,16 +112,25 @@ EbErrorType signal_derivation_pre_analysis_oq(
     picture_control_set_ptr->tf_enable_hme_level0_flag = tf_enable_hme_level0_flag[0][input_resolution][hme_me_level] || tf_enable_hme_level0_flag[1][input_resolution][hme_me_level];
     picture_control_set_ptr->tf_enable_hme_level1_flag = tf_enable_hme_level1_flag[0][input_resolution][hme_me_level] || tf_enable_hme_level1_flag[1][input_resolution][hme_me_level];
     picture_control_set_ptr->tf_enable_hme_level2_flag = tf_enable_hme_level2_flag[0][input_resolution][hme_me_level] || tf_enable_hme_level2_flag[1][input_resolution][hme_me_level];
-    if (sequence_control_set_ptr->static_config.enable_restoration_filtering == -1) {
+    if (sequence_control_set_ptr->static_config.enable_restoration_filtering == AUTO_MODE) {
+      if (sequence_control_set_ptr->static_config
+              .enable_restoration_filtering == -1) {
         if (picture_control_set_ptr->enc_mode >= ENC_M8)
-            sequence_control_set_ptr->seq_header.enable_restoration = 0;
+          sequence_control_set_ptr->seq_header.enable_restoration = 0;
+      } else if (sequence_control_set_ptr->static_config
+                     .enable_restoration_filtering == 0)
+        sequence_control_set_ptr->seq_header.enable_restoration = 0;
+      else if (sequence_control_set_ptr->static_config
+                   .enable_restoration_filtering == 1)
+        sequence_control_set_ptr->seq_header.enable_restoration = 0;
     }
-    else if(sequence_control_set_ptr->static_config.enable_restoration_filtering == 0)
-        sequence_control_set_ptr->seq_header.enable_restoration = 0;
-    else if(sequence_control_set_ptr->static_config.enable_restoration_filtering == 1)
-        sequence_control_set_ptr->seq_header.enable_restoration = 0;
+    else
+      sequence_control_set_ptr->seq_header.enable_restoration = sequence_control_set_ptr->static_config.enable_restoration_filtering;
 
-    sequence_control_set_ptr->cdf_mode = (picture_control_set_ptr->enc_mode <= ENC_M6) ? 0 : 1;
+    if (sequence_control_set_ptr->static_config.enable_cdf == AUTO_MODE)
+        sequence_control_set_ptr->cdf_mode = (picture_control_set_ptr->enc_mode <= ENC_M6) ? 0 : 1;
+    else
+        sequence_control_set_ptr->cdf_mode = sequence_control_set_ptr->static_config.enable_cdf;
     return return_error;
 }
 
@@ -698,8 +707,9 @@ void* resource_coordination_kernel(void *input_ptr)
                     sequence_control_set_ptr->static_config.altref_nframes > 1 &&
                     ((sequence_control_set_ptr->static_config.encoder_bit_depth >= 8 && sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ||
                     sequence_control_set_ptr->static_config.encoder_bit_depth == 8) ? EB_TRUE : EB_FALSE;
-
+            if (sequence_control_set_ptr->static_config.inter_intra_compound == AUTO_MODE)
 #if II_COMP_FLAG
+
 #if INTER_INTRA_HBD
             // Set inter-intra mode      Settings
             // 0                 OFF
@@ -712,6 +722,8 @@ void* resource_coordination_kernel(void *input_ptr)
                                                                               (sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 1 : 0;
 #endif
 #endif
+            else
+                sequence_control_set_ptr->seq_header.enable_interintra_compound = sequence_control_set_ptr->static_config.inter_intra_compound;
 #if FILTER_INTRA_FLAG
             // Set filter intra mode      Settings
             // 0                 OFF
