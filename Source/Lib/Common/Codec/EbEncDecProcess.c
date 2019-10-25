@@ -1193,7 +1193,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
                 CHROMA_MODE_2 :
                 CHROMA_MODE_3;
     else
-    if (MR_MODE)
+    if (MR_MODE|| MR_CHROMA)
         context_ptr->chroma_level = CHROMA_MODE_0;
     else
     if (picture_control_set_ptr->enc_mode == ENC_M0 && picture_control_set_ptr->temporal_layer_index == 0)
@@ -1285,7 +1285,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
         context_ptr->global_mv_injection = 0;
 #endif
 
-    if (sequence_control_set_ptr->static_config.new_nearest_comb_inject == AUTO_MODE)
+    if (sequence_control_set_ptr->static_config.new_nearest_comb_inject == AUTO_MODE) {
 #if FIX_NEAREST_NEW
         if (picture_control_set_ptr->enc_mode <= ENC_M0 && picture_control_set_ptr->parent_pcs_ptr->is_used_as_reference_flag)
 #else
@@ -1294,8 +1294,10 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
             context_ptr->new_nearest_near_comb_injection = 1;
         else
             context_ptr->new_nearest_near_comb_injection = 0;
+    }
     else
         context_ptr->new_nearest_near_comb_injection = sequence_control_set_ptr->static_config.new_nearest_comb_inject;
+
     if (sequence_control_set_ptr->static_config.nx4_4xn_parent_mv_inject == AUTO_MODE)
         if (picture_control_set_ptr->enc_mode == ENC_M0)
             context_ptr->nx4_4xn_parent_mv_injection = 1;

@@ -873,7 +873,7 @@ EbErrorType signal_derivation_multi_processes_oq(
     // NSQ_SEARCH_LEVEL6                              Allow only NSQ Inter-NEAREST/NEAR/GLOBAL if parent SQ has no coeff + reordering nsq_table number and testing only 6 NSQ SHAPE
     // NSQ_SEARCH_FULL                                Allow NSQ Intra-FULL and Inter-FULL
 
-        if (MR_MODE)
+        if (MR_MODE|| MR_NSQ)
             picture_control_set_ptr->nsq_search_level = NSQ_SEARCH_FULL;
         else if (sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M1)
@@ -963,7 +963,7 @@ EbErrorType signal_derivation_multi_processes_oq(
     // 3                                              Chroma blind interpolation search at fast loop
     // 4                                              Interpolation search at fast loop
 
-        if (MR_MODE)
+        if (MR_MODE|| MR_INTERPOLATION)
             picture_control_set_ptr->interpolation_search_level = IT_SEARCH_FAST_LOOP;
         else if (sc_content_detected)
             picture_control_set_ptr->interpolation_search_level = IT_SEARCH_OFF;
@@ -1080,6 +1080,9 @@ EbErrorType signal_derivation_multi_processes_oq(
     }
     else
         picture_control_set_ptr->cdef_filter_mode = 0;
+#if MR_CDEF
+    picture_control_set_ptr->cdef_filter_mode = 5;
+#endif
 
     // SG Level                                    Settings
     // 0                                            OFF
@@ -1148,17 +1151,20 @@ EbErrorType signal_derivation_multi_processes_oq(
         picture_control_set_ptr->tx_search_level = TX_SEARCH_ENC_DEC;
 
     // Set tx search skip weights (MAX_MODE_COST: no skipping; 0: always skipping)
-    if (picture_control_set_ptr->tx_search_level == TX_SEARCH_ENC_DEC)
+    if (MR_MODE||MR_TX_WEIGHT) // tx weight
         picture_control_set_ptr->tx_weight = MAX_MODE_COST;
-    else if (!MR_MODE && picture_control_set_ptr->enc_mode <= ENC_M1)
-        picture_control_set_ptr->tx_weight = FC_SKIP_TX_SR_TH025;
-    else if (!MR_MODE){
-        if (picture_control_set_ptr->is_used_as_reference_flag)
+    else {
+        if (picture_control_set_ptr->tx_search_level == TX_SEARCH_ENC_DEC)
+            picture_control_set_ptr->tx_weight = MAX_MODE_COST;
+        else if (!MR_MODE && picture_control_set_ptr->enc_mode <= ENC_M1)
             picture_control_set_ptr->tx_weight = FC_SKIP_TX_SR_TH025;
-        else
-            picture_control_set_ptr->tx_weight = FC_SKIP_TX_SR_TH010;
+        else if (!MR_MODE) {
+            if (picture_control_set_ptr->is_used_as_reference_flag)
+                picture_control_set_ptr->tx_weight = FC_SKIP_TX_SR_TH025;
+            else
+                picture_control_set_ptr->tx_weight = FC_SKIP_TX_SR_TH010;
+        }
     }
-
     // Set tx search reduced set falg (0: full tx set; 1: reduced tx set; 1: two tx))
     if (sc_content_detected)
         if (picture_control_set_ptr->enc_mode <= ENC_M1)
@@ -1290,7 +1296,7 @@ EbErrorType signal_derivation_multi_processes_oq(
         // 1                                     ON
 
 #if SPEED_OPT
-        if (MR_MODE || picture_control_set_ptr->sc_content_detected)
+        if (MR_MODE || MR_SKIP_ATB || picture_control_set_ptr->sc_content_detected)
 #else
         if (MR_MODE || picture_control_set_ptr->enc_mode == ENC_M0 || picture_control_set_ptr->sc_content_detected)
 #endif
