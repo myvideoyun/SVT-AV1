@@ -109,6 +109,13 @@ extern "C" {
 #define AOM_INTERP_EXTEND                               4
 #define OPTIMISED_EX_SUBPEL                             1
 
+
+/*****M1 Features*****/
+#define M1_high_precision                   0
+#define M1_wm                               0
+#define M1_mdc                              0
+#define M1_nsq                              0
+
 #define AOM_LEFT_TOP_MARGIN_PX(subsampling) \
   ((AOM_BORDER_IN_PIXELS >> subsampling) - AOM_INTERP_EXTEND)
 #define AOM_LEFT_TOP_MARGIN_SCALED(subsampling) \

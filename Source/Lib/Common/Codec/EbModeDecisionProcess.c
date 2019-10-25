@@ -543,20 +543,35 @@ void reset_mode_decision(
         (picture_control_set_ptr->parent_pcs_ptr->is_pan || picture_control_set_ptr->parent_pcs_ptr->is_tilt) ? 1 : 0;
 #endif
 #endif
+#if M1_high_precision
+    picture_control_set_ptr->parent_pcs_ptr->frm_hdr.allow_high_precision_mv = 0;
+#endif
     EbBool enable_wm;
-    if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
-        enable_wm = EB_FALSE;
-    else
+    if (sequence_control_set_ptr->static_config.enable_warped_motion == AUTO_MODE) {
+        if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
+            enable_wm = EB_FALSE;
+        else
 #if WARP_UPDATE
-        enable_wm = (MR_MODE ||
-        (picture_control_set_ptr->parent_pcs_ptr->enc_mode == ENC_M0 && picture_control_set_ptr->parent_pcs_ptr->is_used_as_reference_flag) ||
-        (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5 && picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index == 0)) ? EB_TRUE : EB_FALSE;
+#if M1_wm
+            enable_wm = (MR_MODE ||
+            (picture_control_set_ptr->parent_pcs_ptr->enc_mode == ENC_M0 && picture_control_set_ptr->parent_pcs_ptr->is_used_as_reference_flag) ||
+                (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5 && picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index == 0)) ? EB_TRUE : EB_FALSE;
 #else
-        enable_wm = (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5) || MR_MODE ? EB_TRUE : EB_FALSE;
+            enable_wm = (MR_MODE ||
+            (picture_control_set_ptr->parent_pcs_ptr->enc_mode == ENC_M0 && picture_control_set_ptr->parent_pcs_ptr->is_used_as_reference_flag) ||
+                (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5 && picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index == 0)) ? EB_TRUE : EB_FALSE;
+#endif
+#else
+            enable_wm = (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5) || MR_MODE ? EB_TRUE : EB_FALSE;
 #endif
 #if !FIX_WM_SETTINGS
-    enable_wm = picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index > 0 ? EB_FALSE : enable_wm;
+        enable_wm = picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index > 0 ? EB_FALSE : enable_wm;
 #endif
+    }
+    else
+        enable_wm = sequence_control_set_ptr->static_config.enable_warped_motion;
+
+
     frm_hdr->allow_warped_motion = enable_wm
         && !(frm_hdr->frame_type == KEY_FRAME || frm_hdr->frame_type == INTRA_ONLY_FRAME)
         && !frm_hdr->error_resilient_mode;
@@ -568,7 +583,7 @@ void reset_mode_decision(
     // 2                                            OBMC @(MVP, PME and ME) + Opt NICs
     // 3                                            OBMC @(MVP, PME ) + Opt NICs
     // 4                                            OBMC @(MVP, PME ) + Opt2 NICs
-    if (sequence_control_set_ptr->static_config.enable_obmc) {
+    if (sequence_control_set_ptr->static_config.enable_obmc==AUTO_MODE) {
         if (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M0)
             picture_control_set_ptr->parent_pcs_ptr->pic_obmc_mode =
             picture_control_set_ptr->parent_pcs_ptr->sc_content_detected == 0 && picture_control_set_ptr->slice_type != I_SLICE ? 2 : 0;
@@ -581,7 +596,7 @@ void reset_mode_decision(
 #endif
     }
     else
-        picture_control_set_ptr->parent_pcs_ptr->pic_obmc_mode = 0;
+        picture_control_set_ptr->parent_pcs_ptr->pic_obmc_mode = (picture_control_set_ptr->slice_type == I_SLICE)? 0:sequence_control_set_ptr->static_config.enable_obmc;
 
     frm_hdr->is_motion_mode_switchable =
         frm_hdr->is_motion_mode_switchable || picture_control_set_ptr->parent_pcs_ptr->pic_obmc_mode;

@@ -1995,10 +1995,12 @@ void SetParamBasedOnInput(SequenceControlSet *sequence_control_set_ptr)
     //0: MRP Mode 0 (4,3)
     //1: MRP Mode 1 (2,2)
     sequence_control_set_ptr->mrp_mode = (uint8_t) (sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 0 : 1;
-
-    //0: ON
-    //1: OFF
-    sequence_control_set_ptr->cdf_mode = (uint8_t)(sequence_control_set_ptr->static_config.enc_mode <= ENC_M6) ? 0 : 1;
+    if (sequence_control_set_ptr->static_config.enable_cdf == AUTO_MODE)
+        //0: ON
+        //1: OFF
+        sequence_control_set_ptr->cdf_mode = (uint8_t)(sequence_control_set_ptr->static_config.enc_mode <= ENC_M6) ? 0 : 1;
+    else
+        sequence_control_set_ptr->cdf_mode = sequence_control_set_ptr->static_config.enable_cdf;
 
     //0: NSQ absent
     //1: NSQ present
@@ -2106,7 +2108,7 @@ void CopyApiFromApp(
     sequence_control_set_ptr->static_config.disable_dlf_flag = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->disable_dlf_flag;
 
     // Local Warped Motion
-    sequence_control_set_ptr->static_config.enable_warped_motion = EB_TRUE;
+    sequence_control_set_ptr->static_config.enable_warped_motion = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_warped_motion;
 
     // Global motion
     sequence_control_set_ptr->static_config.enable_global_motion = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_global_motion;
@@ -2115,53 +2117,59 @@ void CopyApiFromApp(
     sequence_control_set_ptr->static_config.enable_restoration_filtering = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_restoration_filtering;
 
     // atb mode
-    sequence_control_set_ptr->static_config.enable_atb                   = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_atb;
+    sequence_control_set_ptr->static_config.enable_atb = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_atb;
     // cdf mode
-    sequence_control_set_ptr->static_config.enable_cdf                   = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_cdf;
+    sequence_control_set_ptr->static_config.enable_cdf = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_cdf;
     //combine class 12
-    sequence_control_set_ptr->static_config.combine_class_12             = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->combine_class_12;
+    sequence_control_set_ptr->static_config.combine_class_12 = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->combine_class_12;
     // edge skip angle intra
-    sequence_control_set_ptr->static_config.edge_skp_angle_intra         = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->edge_skp_angle_intra;
+    sequence_control_set_ptr->static_config.edge_skp_angle_intra = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->edge_skp_angle_intra;
     // inter intra compoound
-    sequence_control_set_ptr->static_config.inter_intra_compound         = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->inter_intra_compound;
+    sequence_control_set_ptr->static_config.inter_intra_compound = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->inter_intra_compound;
     // fractional search 64x64
-    sequence_control_set_ptr->static_config.fract_search_64              = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->fract_search_64;
+    sequence_control_set_ptr->static_config.fract_search_64 = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->fract_search_64;
     // global mv injection
-    sequence_control_set_ptr->static_config.inject_global_mv             = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->inject_global_mv;
+    sequence_control_set_ptr->static_config.inject_global_mv = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->inject_global_mv;
     // motion field motion vector
-    sequence_control_set_ptr->static_config.enable_mfmv                  = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_mfmv;
+    sequence_control_set_ptr->static_config.enable_mfmv = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_mfmv;
     // quantize fp                                                       
-    sequence_control_set_ptr->static_config.quant_fp                     = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->quant_fp;
+    sequence_control_set_ptr->static_config.quant_fp = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->quant_fp;
     // redundant block                                                   
-    sequence_control_set_ptr->static_config.enable_redundant_blk         = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_redundant_blk;
+    sequence_control_set_ptr->static_config.enable_redundant_blk = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_redundant_blk;
     //trellis                                                            
-    sequence_control_set_ptr->static_config.enable_trellis               = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_trellis;
+    sequence_control_set_ptr->static_config.enable_trellis = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_trellis;
     // spatial sse in full loop                                          
-    sequence_control_set_ptr->static_config.spatial_sse_fl               = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->spatial_sse_fl;
+    sequence_control_set_ptr->static_config.spatial_sse_fl = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->spatial_sse_fl;
     // update cdf                                                        
-    sequence_control_set_ptr->static_config.update_cdf                   = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->update_cdf;
+    sequence_control_set_ptr->static_config.update_cdf = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->update_cdf;
     // subpel                                                            
-    sequence_control_set_ptr->static_config.enable_subpel                = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_subpel;
+    sequence_control_set_ptr->static_config.enable_subpel = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_subpel;
     // over boundry block mode                                           
-    sequence_control_set_ptr->static_config.over_bndry_blk               = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->over_bndry_blk;
+    sequence_control_set_ptr->static_config.over_bndry_blk = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->over_bndry_blk;
     // new nearest comb injection
-    sequence_control_set_ptr->static_config.new_nearest_comb_inject      = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->new_nearest_comb_inject;
+    sequence_control_set_ptr->static_config.new_nearest_comb_inject = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->new_nearest_comb_inject;
     // nx4 4xn parent mv injection
-    sequence_control_set_ptr->static_config.nx4_4xn_parent_mv_inject     = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->nx4_4xn_parent_mv_inject;
+    sequence_control_set_ptr->static_config.nx4_4xn_parent_mv_inject = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->nx4_4xn_parent_mv_inject;
     // prune unipred at me
-    sequence_control_set_ptr->static_config.prune_unipred_me             = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->prune_unipred_me;
+    sequence_control_set_ptr->static_config.prune_unipred_me = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->prune_unipred_me;
     //prune ref frame for rec partitions
-    sequence_control_set_ptr->static_config.prune_ref_rec_part           = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->prune_ref_rec_part;
+    sequence_control_set_ptr->static_config.prune_ref_rec_part = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->prune_ref_rec_part;
     // NSQ table
-    sequence_control_set_ptr->static_config.nsq_table                    = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->nsq_table;
+    sequence_control_set_ptr->static_config.nsq_table = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->nsq_table;
     // frame end cdf update mode
-    sequence_control_set_ptr->static_config.frame_end_cdf_update         = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->frame_end_cdf_update;
+    sequence_control_set_ptr->static_config.frame_end_cdf_update = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->frame_end_cdf_update;
 
     // OBMC
     sequence_control_set_ptr->static_config.enable_obmc = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_obmc;
 
+    // Predictive ME
+    sequence_control_set_ptr->static_config.pred_me  = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->pred_me;
+    // BiPred 3x3 injection
+    sequence_control_set_ptr->static_config.bipred_3x3_inject = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->bipred_3x3_inject;
+    // Compound mode
+    sequence_control_set_ptr->static_config.coumpound_level = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->coumpound_level;
     // Filter intra prediction
-    sequence_control_set_ptr->static_config.enable_filter_intra         = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_filter_intra;
+    sequence_control_set_ptr->static_config.enable_filter_intra = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_filter_intra;
 	
     // ME Tools
     sequence_control_set_ptr->static_config.use_default_me_hme = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->use_default_me_hme;
@@ -2686,8 +2694,15 @@ EbErrorType eb_svt_enc_init_parameter(
     config_ptr->hierarchical_levels = 4;
     config_ptr->pred_structure = EB_PRED_RANDOM_ACCESS;
     config_ptr->disable_dlf_flag = EB_FALSE;
-    config_ptr->enable_warped_motion = EB_TRUE;
+    config_ptr->enable_warped_motion = -1;
     config_ptr->enable_global_motion = EB_TRUE;
+    config_ptr->enable_atb = -1;
+    config_ptr->enable_cdf = -1;
+    config_ptr->edge_skp_angle_intra = -1;
+    config_ptr->combine_class_12 = -1;
+    config_ptr->inter_intra_compound = -1;
+    config_ptr->fract_search_64 = -1;
+    config_ptr->inject_global_mv = -1;
     config_ptr->enable_restoration_filtering = -1;
     config_ptr->enable_mfmv                  = -1;
     config_ptr->quant_fp                     = -1;
@@ -2703,7 +2718,10 @@ EbErrorType eb_svt_enc_init_parameter(
     config_ptr->prune_ref_rec_part           = -1;
     config_ptr->nsq_table                    = -1;
     config_ptr->frame_end_cdf_update         = -1;
-    config_ptr->enable_obmc = EB_TRUE;
+    config_ptr->enable_obmc                  = -1;
+    config_ptr->pred_me                      = -1;
+    config_ptr->bipred_3x3_inject            = -1;
+    config_ptr->coumpound_level              = -1;
     config_ptr->enable_filter_intra = EB_TRUE;
     config_ptr->in_loop_me_flag = EB_TRUE;
     config_ptr->ext_block_flag = EB_FALSE;

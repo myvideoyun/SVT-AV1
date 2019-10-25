@@ -191,7 +191,6 @@ EbErrorType CopyConfigurationParameters(
     callback_data->eb_enc_parameters.disable_dlf_flag = (EbBool)config->disable_dlf_flag;
     callback_data->eb_enc_parameters.enable_warped_motion = (EbBool)config->enable_warped_motion;
     callback_data->eb_enc_parameters.enable_global_motion = (EbBool)config->enable_global_motion;
-    callback_data->eb_enc_parameters.enable_restoration_filtering = config->enable_restoration_filtering;
     callback_data->eb_enc_parameters.enable_atb                   = config->enable_atb           ;
     callback_data->eb_enc_parameters.enable_cdf                   = config->enable_cdf           ;
     callback_data->eb_enc_parameters.combine_class_12             = config->combine_class_12     ;
@@ -214,7 +213,10 @@ EbErrorType CopyConfigurationParameters(
     callback_data->eb_enc_parameters.prune_ref_rec_part           = config->prune_ref_rec_part ;
     callback_data->eb_enc_parameters.nsq_table                    = config->nsq_table          ;
     callback_data->eb_enc_parameters.frame_end_cdf_update         = config->frame_end_cdf_update    ;
-    callback_data->eb_enc_parameters.enable_obmc = (EbBool)config->enable_obmc;
+    callback_data->eb_enc_parameters.enable_obmc                  = config->enable_obmc;
+    callback_data->eb_enc_parameters.pred_me                      = config->pred_me    ;
+    callback_data->eb_enc_parameters.bipred_3x3_inject            = config->bipred_3x3_inject;
+    callback_data->eb_enc_parameters.coumpound_level              = config->coumpound_level;
     callback_data->eb_enc_parameters.enable_filter_intra = (EbBool)config->enable_filter_intra;
     callback_data->eb_enc_parameters.use_default_me_hme = (EbBool)config->use_default_me_hme;
     callback_data->eb_enc_parameters.enable_hme_flag = (EbBool)config->enable_hme_flag;

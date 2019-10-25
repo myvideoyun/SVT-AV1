@@ -7599,7 +7599,11 @@ void md_encode_block(
         picture_control_set_ptr->parent_pcs_ptr->nsq_search_level < NSQ_SEARCH_FULL) ? EB_TRUE : EB_FALSE;
 
     if (sequence_control_set_ptr->static_config.nsq_table == AUTO_MODE)
+#if M1_nsq
+        is_nsq_table_used = is_nsq_table_used;
+#else
         is_nsq_table_used = picture_control_set_ptr->parent_pcs_ptr->sc_content_detected || picture_control_set_ptr->enc_mode == ENC_M0 ? EB_FALSE : is_nsq_table_used;
+#endif
     else
         is_nsq_table_used = sequence_control_set_ptr->static_config.nsq_table;
 

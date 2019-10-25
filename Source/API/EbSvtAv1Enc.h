@@ -223,7 +223,7 @@ typedef struct EbSvtAv1EncConfiguration
     /* Warped motion
     *
     * Default is 0. */
-    EbBool                   enable_warped_motion;
+    int8_t                  enable_warped_motion;
 
     /* Global motion
     *
@@ -327,10 +327,25 @@ typedef struct EbSvtAv1EncConfiguration
     * Default is -1. */
     int8_t                frame_end_cdf_update;
 
+    /* Predictive Me
+    *
+    * Default is -1. */
+    int32_t                 pred_me;
+
+    /* Bipred 3x3 Injection
+    *
+    * Default is -1. */
+    int32_t                bipred_3x3_inject;
+
+    /* Compound Mode
+    *
+    * Default is -1. */
+    int32_t                coumpound_level;
+
     /* OBMC
     *
-    * Default is 1. */
-    EbBool                   enable_obmc;
+    * Default is -1. */
+    int32_t                   enable_obmc;
 
     /* Filter intra prediction
     *

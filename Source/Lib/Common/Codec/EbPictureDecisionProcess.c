@@ -898,10 +898,15 @@ EbErrorType signal_derivation_multi_processes_oq(
         else if (picture_control_set_ptr->mdc_depth_level == (MAX_MDC_LEVEL - 1))
             picture_control_set_ptr->nsq_search_level = NSQ_SEARCH_LEVEL7;
 #endif
-        else if (picture_control_set_ptr->enc_mode <= ENC_M1)
-            picture_control_set_ptr->nsq_search_level = NSQ_SEARCH_LEVEL6;
 
-        else if (picture_control_set_ptr->enc_mode <= ENC_M2)
+        else if (picture_control_set_ptr->enc_mode <= ENC_M1)
+#if M1_nsq
+            picture_control_set_ptr->nsq_search_level = (picture_control_set_ptr->is_used_as_reference_flag) ? NSQ_SEARCH_LEVEL6 : NSQ_SEARCH_LEVEL3;
+#else
+            picture_control_set_ptr->nsq_search_level = NSQ_SEARCH_LEVEL6;
+#endif
+
+        else if (picture_control_set_ptr->enc_mode <= ENC_M0)
             if (picture_control_set_ptr->is_used_as_reference_flag)
                 picture_control_set_ptr->nsq_search_level = NSQ_SEARCH_LEVEL5;
             else
@@ -1311,15 +1316,19 @@ EbErrorType signal_derivation_multi_processes_oq(
         else
 
             picture_control_set_ptr->enable_inter_intra = sequence_control_set_ptr->static_config.inter_intra_compound;
-        // Set compound mode      Settings
-        // 0                 OFF: No compond mode search : AVG only
-        // 1                 ON: compond mode search: AVG/DIST/DIFF
-        // 2                 ON: AVG/DIST/DIFF/WEDGE
-        if (sequence_control_set_ptr->compound_mode)
-            picture_control_set_ptr->compound_mode = picture_control_set_ptr->sc_content_detected ? 0 :
-            picture_control_set_ptr->enc_mode <= ENC_M1 ? 2 : 1;
-        else
-            picture_control_set_ptr->compound_mode = 0;
+
+        if (sequence_control_set_ptr->static_config.coumpound_level == AUTO_MODE) {
+            // Set compound mode      Settings
+            // 0                 OFF: No compond mode search : AVG only
+            // 1                 ON: compond mode search: AVG/DIST/DIFF
+            // 2                 ON: AVG/DIST/DIFF/WEDGE
+            if (sequence_control_set_ptr->compound_mode)
+                picture_control_set_ptr->compound_mode = picture_control_set_ptr->sc_content_detected ? 0 :
+                picture_control_set_ptr->enc_mode <= ENC_M1 ? 2 : 1;
+            else
+                picture_control_set_ptr->compound_mode = 0;
+        }
+        picture_control_set_ptr->compound_mode = sequence_control_set_ptr->static_config.coumpound_level;
 
         // set compound_types_to_try
         if (picture_control_set_ptr->compound_mode)

@@ -244,7 +244,7 @@ typedef struct EbConfig
     /****************************************
      * Local Warped Motion
      ****************************************/
-    EbBool                  enable_warped_motion;
+    int8_t                  enable_warped_motion;
 
     /****************************************
      * Global Motion
@@ -340,11 +340,23 @@ typedef struct EbConfig
       * frame end cdf update
      ****************************************/
      int8_t                frame_end_cdf_update;
+     /****************************************
+      * predictive me
+     ****************************************/
+     int8_t                 pred_me;
+     /****************************************
+      * bipred 3x3 injection
+     ****************************************/
+     int8_t                 bipred_3x3_inject;
+     /****************************************
+      * compound level
+     ****************************************/
+     int8_t                 coumpound_level;
 
     /****************************************
      * OBMC
      ****************************************/
-    EbBool                  enable_obmc;
+     int32_t                  enable_obmc;
     /****************************************
      * Filter intra prediction
      ****************************************/
