@@ -428,6 +428,20 @@ typedef struct EbConfig
     EbBool                   unrestricted_motion_vector;
 
     /****************************************
+     * Chroma
+     *
+     * Level                Settings
+     * CHROMA_MODE_0  0     Full chroma search @ MD
+     * CHROMA_MODE_1  1     Fast chroma search @ MD
+     * CHROMA_MODE_2  2     Chroma blind @ MD + CFL @ EP
+     * CHROMA_MODE_3  3     Chroma blind @ MD + no CFL @ EP
+     *
+     * Default is -1 (AUTO) */
+
+    /****************************************/
+    int32_t                   chroma_level;
+
+    /****************************************
      * Annex A Parameters
      ****************************************/
     uint32_t                 profile;

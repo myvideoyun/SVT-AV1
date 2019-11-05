@@ -12,6 +12,8 @@
 *.opensdf
 *.log
 .vscode
+.idea
+cmake-build-debug
 Bin
 Build
 build

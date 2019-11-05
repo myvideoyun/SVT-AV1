@@ -347,6 +347,17 @@ typedef struct EbSvtAv1EncConfiguration
     * Default is -1. */
     int32_t                   enable_obmc;
 
+    /* Chroma mode
+     *
+     * Level                Settings
+     * CHROMA_MODE_0  0     Full chroma search @ MD
+     * CHROMA_MODE_1  1     Fast chroma search @ MD
+     * CHROMA_MODE_2  2     Chroma blind @ MD + CFL @ EP
+     * CHROMA_MODE_3  3     Chroma blind @ MD + no CFL @ EP
+     *
+     * Default is -1 (AUTO) */
+    int32_t                   chroma_level;
+
     /* Filter intra prediction
     *
     * Default is 1. */

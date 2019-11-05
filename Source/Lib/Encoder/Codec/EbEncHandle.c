@@ -2162,6 +2162,9 @@ void CopyApiFromApp(
     // OBMC
     sequence_control_set_ptr->static_config.enable_obmc = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_obmc;
 
+    // Chroma mode
+    sequence_control_set_ptr->static_config.chroma_level = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->chroma_level;
+
     // Predictive ME
     sequence_control_set_ptr->static_config.pred_me  = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->pred_me;
     // BiPred 3x3 injection
@@ -2694,34 +2697,35 @@ EbErrorType eb_svt_enc_init_parameter(
     config_ptr->hierarchical_levels = 4;
     config_ptr->pred_structure = EB_PRED_RANDOM_ACCESS;
     config_ptr->disable_dlf_flag = EB_FALSE;
-    config_ptr->enable_warped_motion = -1;
+    config_ptr->enable_warped_motion = AUTO_MODE;
     config_ptr->enable_global_motion = EB_TRUE;
-    config_ptr->enable_atb = -1;
-    config_ptr->enable_cdf = -1;
-    config_ptr->edge_skp_angle_intra = -1;
-    config_ptr->combine_class_12 = -1;
-    config_ptr->inter_intra_compound = -1;
-    config_ptr->fract_search_64 = -1;
-    config_ptr->inject_global_mv = -1;
-    config_ptr->enable_restoration_filtering = -1;
-    config_ptr->enable_mfmv                  = -1;
-    config_ptr->quant_fp                     = -1;
-    config_ptr->enable_redundant_blk         = -1;
-    config_ptr->enable_trellis               = -1;
-    config_ptr->spatial_sse_fl               = -1;
-    config_ptr->update_cdf                   = -1;
-    config_ptr->enable_subpel                = -1;
-    config_ptr->over_bndry_blk               = -1;
-    config_ptr->new_nearest_comb_inject      = -1;
-    config_ptr->nx4_4xn_parent_mv_inject     = -1;
-    config_ptr->prune_unipred_me             = -1;
-    config_ptr->prune_ref_rec_part           = -1;
-    config_ptr->nsq_table                    = -1;
-    config_ptr->frame_end_cdf_update         = -1;
-    config_ptr->enable_obmc                  = -1;
-    config_ptr->pred_me                      = -1;
-    config_ptr->bipred_3x3_inject            = -1;
-    config_ptr->coumpound_level              = -1;
+    config_ptr->enable_atb = AUTO_MODE;
+    config_ptr->enable_cdf = AUTO_MODE;
+    config_ptr->edge_skp_angle_intra = AUTO_MODE;
+    config_ptr->combine_class_12 = AUTO_MODE;
+    config_ptr->inter_intra_compound = AUTO_MODE;
+    config_ptr->fract_search_64 = AUTO_MODE;
+    config_ptr->inject_global_mv = AUTO_MODE;
+    config_ptr->enable_restoration_filtering = AUTO_MODE;
+    config_ptr->enable_mfmv = AUTO_MODE;
+    config_ptr->quant_fp = AUTO_MODE;
+    config_ptr->enable_redundant_blk = AUTO_MODE;
+    config_ptr->enable_trellis = AUTO_MODE;
+    config_ptr->spatial_sse_fl = AUTO_MODE;
+    config_ptr->update_cdf = AUTO_MODE;
+    config_ptr->enable_subpel = AUTO_MODE;
+    config_ptr->over_bndry_blk = AUTO_MODE;
+    config_ptr->new_nearest_comb_inject = AUTO_MODE;
+    config_ptr->nx4_4xn_parent_mv_inject = AUTO_MODE;
+    config_ptr->prune_unipred_me = AUTO_MODE;
+    config_ptr->prune_ref_rec_part = AUTO_MODE;
+    config_ptr->nsq_table = AUTO_MODE;
+    config_ptr->frame_end_cdf_update = AUTO_MODE;
+    config_ptr->enable_obmc = AUTO_MODE;
+    config_ptr->chroma_level = AUTO_MODE;
+    config_ptr->pred_me = AUTO_MODE;
+    config_ptr->bipred_3x3_inject = AUTO_MODE;
+    config_ptr->coumpound_level = AUTO_MODE;
     config_ptr->enable_filter_intra = EB_TRUE;
     config_ptr->in_loop_me_flag = EB_TRUE;
     config_ptr->ext_block_flag = EB_FALSE;

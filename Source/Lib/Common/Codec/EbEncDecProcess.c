@@ -1182,29 +1182,32 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
     // CHROMA_MODE_1  1     Fast chroma search @ MD
     // CHROMA_MODE_2  2     Chroma blind @ MD + CFL @ EP
     // CHROMA_MODE_3  3     Chroma blind @ MD + no CFL @ EP
-    if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
+    if (sequence_control_set_ptr->static_config.chroma_level == AUTO_MODE)
+      if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
         if (picture_control_set_ptr->enc_mode <= ENC_M6)
-            context_ptr->chroma_level = CHROMA_MODE_1;
+          context_ptr->chroma_level = CHROMA_MODE_1;
+        else if (picture_control_set_ptr->parent_pcs_ptr
+                     ->temporal_layer_index == 0)
+          context_ptr->chroma_level = CHROMA_MODE_1;
         else
-            if (picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index == 0)
-                context_ptr->chroma_level = CHROMA_MODE_1;
-            else
-                context_ptr->chroma_level = (sequence_control_set_ptr->encoder_bit_depth == EB_8BIT) ?
-                CHROMA_MODE_2 :
-                CHROMA_MODE_3;
-    else
-    if (MR_MODE|| MR_CHROMA)
+          context_ptr->chroma_level =
+              (sequence_control_set_ptr->encoder_bit_depth == EB_8BIT)
+                  ? CHROMA_MODE_2
+                  : CHROMA_MODE_3;
+      else if (MR_MODE || MR_CHROMA)
         context_ptr->chroma_level = CHROMA_MODE_0;
-    else
-    if (picture_control_set_ptr->enc_mode == ENC_M0 && picture_control_set_ptr->temporal_layer_index == 0)
+      else if (picture_control_set_ptr->enc_mode == ENC_M0 &&
+               picture_control_set_ptr->temporal_layer_index == 0)
         context_ptr->chroma_level = CHROMA_MODE_0;
-    else
-    if (picture_control_set_ptr->enc_mode <= ENC_M4)
+      else if (picture_control_set_ptr->enc_mode <= ENC_M4)
         context_ptr->chroma_level = CHROMA_MODE_1;
-    else
-        context_ptr->chroma_level = (sequence_control_set_ptr->encoder_bit_depth == EB_8BIT) ?
-            CHROMA_MODE_2 :
-            CHROMA_MODE_3 ;
+      else
+        context_ptr->chroma_level =
+            (sequence_control_set_ptr->encoder_bit_depth == EB_8BIT)
+                ? CHROMA_MODE_2
+                : CHROMA_MODE_3;
+    else // use specified level
+      context_ptr->chroma_level = sequence_control_set_ptr->static_config.chroma_level;
 
     // Set fast loop method
     // 1 fast loop: SSD_SEARCH not supported
