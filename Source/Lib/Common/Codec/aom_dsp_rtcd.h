@@ -22,7 +22,9 @@
 #if OBMC_FLAG
 #include "EbCodingUnit.h"
 #endif
-
+#if AUTO_MAX_PARTITION
+# include "ml.h"
+#endif
 #ifdef RTCD_C
 #define RTCD_EXTERN                //CHKN RTCD call in effect. declare the function pointers in  encHandle.
 #else
@@ -2918,6 +2920,12 @@ extern "C" {
     RTCD_EXTERN void(*un_pack2d_16_bit_src_mul4)(uint16_t *in16_bit_buffer, uint32_t in_stride, uint8_t *out8_bit_buffer, uint8_t *outn_bit_buffer, uint32_t out8_stride, uint32_t outn_stride, uint32_t width, uint32_t height);
     RTCD_EXTERN void(*picture_addition)(uint8_t *pred_ptr, uint32_t  pred_stride, int16_t *residual_ptr, uint32_t residual_stride, uint8_t *recon_ptr, uint32_t recon_stride, uint32_t width, uint32_t height);
     RTCD_EXTERN void(*compute_interm_var_four8x8)(uint8_t *input_samples, uint16_t input_stride, uint64_t *mean_of8x8_blocks, uint64_t *mean_of_squared8x8_blocks);
+
+#if AUTO_MAX_PARTITION
+    void av1_nn_predict_c(const float *input_nodes, const NN_CONFIG *const nn_config, int reduce_prec, float *const output);
+    void av1_nn_predict_sse3(const float *input_nodes, const NN_CONFIG *const nn_config, int reduce_prec, float *const output);
+    RTCD_EXTERN void(*av1_nn_predict)(const float *input_nodes, const NN_CONFIG *const nn_config, int reduce_prec, float *const output);
+#endif
 
     /* Moved to aom_dsp_rtcd.c file:
     static void setup_rtcd_internal(EbAsm asm_type)

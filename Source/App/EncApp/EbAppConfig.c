@@ -110,6 +110,7 @@
 #define TILE_COL_TOKEN                   "-tile-columns"
 
 #define SQ_WEIGHT_TOKEN                 "-sqw"
+#define ENABLE_AMP_TOKEN                "-enable-amp"
 
 #define SCENE_CHANGE_DETECTION_TOKEN    "-scd"
 #define INJECTOR_TOKEN                  "-inj"  // no Eval
@@ -314,6 +315,8 @@ static void SetSquareWeight                     (const char *value, EbConfig *cf
             cfg->sq_weight = (uint32_t)~0;
 }
 
+static void SetEnableAutomaxPartition           (const char *value, EbConfig *cfg) { cfg->enable_auto_max_partition = (uint8_t)strtol(value, NULL, 0); };
+
 enum cfg_type{
     SINGLE_INPUT,   // Configuration parameters that have only 1 value input
     ARRAY_INPUT     // Configuration parameters that have multiple values as input
@@ -449,6 +452,7 @@ config_entry_t config_entry[] = {
     // --- end: ALTREF_FILTERING_SUPPORT
 
     { SINGLE_INPUT, SQ_WEIGHT_TOKEN, "SquareWeight", SetSquareWeight },
+    { SINGLE_INPUT, ENABLE_AMP_TOKEN, "AutomaxPartition", SetEnableAutomaxPartition },
 
     // Termination
     {SINGLE_INPUT,NULL,  NULL,                                NULL}
@@ -616,6 +620,7 @@ void eb_config_ctor(EbConfig *config_ptr)
     // --- end: ALTREF_FILTERING_SUPPORT
 
     config_ptr->sq_weight                            = 100;
+    config_ptr->enable_auto_max_partition             = 1;
 
     return;
 }

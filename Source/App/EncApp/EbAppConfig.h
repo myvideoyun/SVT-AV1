@@ -375,6 +375,9 @@ typedef struct EbConfig
     // square cost weighting for deciding if a/b shapes could be skipped
     uint32_t                 sq_weight;
 
+    // signal for enabling shortcut to skip search depths
+    uint8_t                 enable_auto_max_partition;
+
 } EbConfig;
 
 extern void eb_config_ctor(EbConfig *config_ptr);

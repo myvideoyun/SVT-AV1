@@ -471,6 +471,9 @@ typedef struct EbSvtAv1EncConfiguration
     EbBool                   enable_overlays;
 
     uint32_t                     sq_weight;
+
+    // signal for automax_partition; on by default
+    uint8_t                     enable_auto_max_partition;
 } EbSvtAv1EncConfiguration;
 
     /* STEP 1: Call the library to construct a Component Handle.

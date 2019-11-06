@@ -245,6 +245,7 @@ EbErrorType CopyConfigurationParameters(
     }
 
     callback_data->eb_enc_parameters.sq_weight = config->sq_weight;
+    callback_data->eb_enc_parameters.enable_auto_max_partition = config->enable_auto_max_partition;
 
     return return_error;
 }

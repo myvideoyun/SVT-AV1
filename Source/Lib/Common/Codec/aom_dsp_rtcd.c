@@ -1883,6 +1883,10 @@ void setup_rtcd_internal(EbAsm asm_type)
              compute_interm_var_four8x8_helper_sse2,
              compute_interm_var_four8x8_avx2_intrin);
 
+#if AUTO_MAX_PARTITION
+    av1_nn_predict = av1_nn_predict_c;
+    if (flags & HAS_SSE3) av1_nn_predict = av1_nn_predict_sse3;
+#endif
 }
 
 

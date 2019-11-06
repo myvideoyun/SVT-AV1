@@ -2233,6 +2233,7 @@ void CopyApiFromApp(
     sequence_control_set_ptr->static_config.enable_overlays = pComponentParameterStructure->enable_overlays;
 
     sequence_control_set_ptr->static_config.sq_weight = pComponentParameterStructure->sq_weight;
+    sequence_control_set_ptr->static_config.enable_auto_max_partition = pComponentParameterStructure->enable_auto_max_partition;
 
     return;
 }
@@ -2710,6 +2711,8 @@ EbErrorType eb_svt_enc_init_parameter(
     config_ptr->enable_overlays = EB_FALSE;
 
     config_ptr->sq_weight = 100;
+
+    config_ptr->enable_auto_max_partition = 1;
 
     return return_error;
 }
