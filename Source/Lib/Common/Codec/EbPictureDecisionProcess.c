@@ -855,10 +855,14 @@ EbErrorType signal_derivation_multi_processes_oq(
     // 6                                     pred - 1 + 3
     // 7                                     All
 
-    if (MR_MODE || sc_content_detected || sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
+    if (MR_MODE || sc_content_detected || MR_NSQ || sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
         picture_control_set_ptr->mdc_depth_level = MAX_MDC_LEVEL;
     else if (picture_control_set_ptr->enc_mode == ENC_M0)
+#if M1_mdc
+        picture_control_set_ptr->mdc_depth_level = 5;
+#else
         picture_control_set_ptr->mdc_depth_level = (sequence_control_set_ptr->input_resolution == INPUT_SIZE_576p_RANGE_OR_LOWER) ? MAX_MDC_LEVEL : 6;
+#endif
     else
         picture_control_set_ptr->mdc_depth_level = MAX_MDC_LEVEL; // Not tuned yet.
 #endif
@@ -898,14 +902,12 @@ EbErrorType signal_derivation_multi_processes_oq(
         else if (picture_control_set_ptr->mdc_depth_level == (MAX_MDC_LEVEL - 1))
             picture_control_set_ptr->nsq_search_level = NSQ_SEARCH_LEVEL7;
 #endif
-
         else if (picture_control_set_ptr->enc_mode <= ENC_M1)
 #if M1_nsq
             picture_control_set_ptr->nsq_search_level = (picture_control_set_ptr->is_used_as_reference_flag) ? NSQ_SEARCH_LEVEL6 : NSQ_SEARCH_LEVEL3;
 #else
             picture_control_set_ptr->nsq_search_level = NSQ_SEARCH_LEVEL6;
 #endif
-
         else if (picture_control_set_ptr->enc_mode <= ENC_M0)
             if (picture_control_set_ptr->is_used_as_reference_flag)
                 picture_control_set_ptr->nsq_search_level = NSQ_SEARCH_LEVEL5;
@@ -1080,6 +1082,7 @@ EbErrorType signal_derivation_multi_processes_oq(
     }
     else
         picture_control_set_ptr->cdef_filter_mode = 0;
+
 #if MR_CDEF
     picture_control_set_ptr->cdef_filter_mode = 5;
 #endif
@@ -1165,6 +1168,7 @@ EbErrorType signal_derivation_multi_processes_oq(
                 picture_control_set_ptr->tx_weight = FC_SKIP_TX_SR_TH010;
         }
     }
+
     // Set tx search reduced set falg (0: full tx set; 1: reduced tx set; 1: two tx))
     if (sc_content_detected)
         if (picture_control_set_ptr->enc_mode <= ENC_M1)
@@ -1268,28 +1272,28 @@ EbErrorType signal_derivation_multi_processes_oq(
         // Set atb mode      Settings
         // 0                 OFF: no transform partitioning
         // 1                 ON for INTRA blocks
-        if (sequence_control_set_ptr->static_config.enable_atb == AUTO_MODE) {
-#if ATB_10_BIT
-          if (picture_control_set_ptr->enc_mode <= ENC_M1 &&
-              !sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
-#else
-          if (picture_control_set_ptr->enc_mode <= ENC_M1 &&
-              sequence_control_set_ptr->static_config.encoder_bit_depth ==
-                  EB_8BIT)
-#endif
 
-#if SPEED_OPT
-            picture_control_set_ptr->atb_mode =
-                (MR_MODE || picture_control_set_ptr->temporal_layer_index == 0)
-                    ? 1
-                    : 0;
+        if (sequence_control_set_ptr->static_config.enable_atb == AUTO_MODE) {
+
+#if ATB_10_BIT
+            if (picture_control_set_ptr->enc_mode <= ENC_M1 &&  !sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
 #else
-            picture_control_set_ptr->atb_mode = 1;
+            if (picture_control_set_ptr->enc_mode <= ENC_M1 && sequence_control_set_ptr->static_config.encoder_bit_depth == EB_8BIT)
 #endif
-          else
-            picture_control_set_ptr->atb_mode = 0;
-        } else
-            picture_control_set_ptr->atb_mode = sequence_control_set_ptr->static_config.enable_atb;
+#if SPEED_OPT
+                picture_control_set_ptr->atb_mode = (MR_MODE || picture_control_set_ptr->temporal_layer_index == 0) ? 1 : 0;
+#else
+                picture_control_set_ptr->atb_mode = 1;
+#endif
+            else
+                picture_control_set_ptr->atb_mode = 0;
+	}
+	else
+           picture_control_set_ptr->atb_mode = sequence_control_set_ptr->static_config.enable_atb;
+
+#if MR_ATB
+        picture_control_set_ptr->atb_mode = 1;
+#endif
 
         // Set skip atb                          Settings
         // 0                                     OFF
@@ -1304,47 +1308,49 @@ EbErrorType signal_derivation_multi_processes_oq(
         else
             picture_control_set_ptr->coeff_based_skip_atb = 1;
 
-            // Set Wedge mode      Settings
-            // 0                 FULL: Full search
-            // 1                 Fast: If two predictors are very similar, skip wedge compound mode search
-            // 2                 Fast: estimate Wedge sign
-            // 3                 Fast: Mode 1 & Mode 2
+        // Set Wedge mode      Settings
+        // 0                 FULL: Full search
+        // 1                 Fast: If two predictors are very similar, skip wedge compound mode search
+        // 2                 Fast: estimate Wedge sign
+        // 3                 Fast: Mode 1 & Mode 2
 
-            picture_control_set_ptr->wedge_mode = 0;
+        picture_control_set_ptr->wedge_mode = 0;
 
         if (sequence_control_set_ptr->static_config.inter_intra_compound == AUTO_MODE)
 #if II_COMP_FLAG
-            // inter intra pred                      Settings
-            // 0                                     OFF
-            // 1                                     ON
+        // inter intra pred                      Settings
+        // 0                                     OFF
+        // 1                                     ON
+
             picture_control_set_ptr->enable_inter_intra = picture_control_set_ptr->slice_type != I_SLICE ? sequence_control_set_ptr->seq_header.enable_interintra_compound : 0;
 #endif
         else
-
             picture_control_set_ptr->enable_inter_intra = sequence_control_set_ptr->static_config.inter_intra_compound;
 
-        if (sequence_control_set_ptr->static_config.coumpound_level == AUTO_MODE) {
-            // Set compound mode      Settings
-            // 0                 OFF: No compond mode search : AVG only
-            // 1                 ON: compond mode search: AVG/DIST/DIFF
-            // 2                 ON: AVG/DIST/DIFF/WEDGE
+        // Set compound mode      Settings
+        // 0                 OFF: No compond mode search : AVG only
+        // 1                 ON: compond mode search: AVG/DIST/DIFF
+        // 2                 ON: AVG/DIST/DIFF/WEDGE
+        if (sequence_control_set_ptr->static_config.compound_level == AUTO_MODE) {
             if (sequence_control_set_ptr->compound_mode)
                 picture_control_set_ptr->compound_mode = picture_control_set_ptr->sc_content_detected ? 0 :
                 picture_control_set_ptr->enc_mode <= ENC_M1 ? 2 : 1;
             else
                 picture_control_set_ptr->compound_mode = 0;
-        }
-        picture_control_set_ptr->compound_mode = sequence_control_set_ptr->static_config.coumpound_level;
+	}
+	else
+            picture_control_set_ptr->compound_mode = sequence_control_set_ptr->static_config.compound_level;
 
         // set compound_types_to_try
         if (picture_control_set_ptr->compound_mode)
             picture_control_set_ptr->compound_types_to_try = picture_control_set_ptr->compound_mode == 1 ? MD_COMP_DIFF0 : MD_COMP_WEDGE;
         else
             picture_control_set_ptr->compound_types_to_try = MD_COMP_AVG;
+
+        // Set frame end cdf update mode      Settings
+        // 0                                     OFF
+        // 1                                     ON
         if (sequence_control_set_ptr->static_config.frame_end_cdf_update == AUTO_MODE)
-            // Set frame end cdf update mode      Settings
-            // 0                                     OFF
-            // 1                                     ON
             if (picture_control_set_ptr->enc_mode == ENC_M0)
                 picture_control_set_ptr->frame_end_cdf_update_mode = 1;
             else

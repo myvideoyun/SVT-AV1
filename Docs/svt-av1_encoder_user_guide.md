@@ -159,7 +159,33 @@ The encoder parameters present in the `Sample.cfg` file are listed in this table
 | **HMELevel1** | -hme-l1 | [0 - 1] | Depends on input resolution | Enable HME Level 1 , 0 = OFF, 1 = ON |
 | **HMELevel2** | -hme-l2 | [0 - 1] | Depends on input resolution | Enable HME Level 2 , 0 = OFF, 1 = ON |
 | **InLoopMeFlag** | -in-loop-me | [0 - 1] | Depends on –enc-mode | 0=ME on source samples, 1= ME on recon samples |
-| **LocalWarpedMotion** | -local-warp | [0 - 1] | 0 | Enable warped motion use , 0 = OFF, 1 = ON |
+| **LocalWarpedMotion** | -local-warp | [0/1, -1 for auto] | AUTO | Enable warped motion use , 0 = OFF, 1 = ON, -1 = AUTO |
+| **OBMC** | -obmc | [0/1, -1 for auto] | AUTO | Enable OBMC, 0 = OFF, 1 = ON, -1 = AUTO |
+| **Bipred3x3** | -bipred-3x3 | [0-2, -1 for auto] | AUTO | Set bipred3x3 injection, 0 = OFF, 1 = ON FULL, 2 = Reduced set, -1 = AUTO|
+| **PredMe** | -pred-me | [0-5, -1 for auto] | AUTO | Set predictive me level: <BR>-1 = AUTO<BR>0 = OFF <BR>1 = 7x5 full-pel search + sub-pel refinement off <BR>2 = 7x5 full-pel search +  (H + V) sub-pel refinement only = 4 half-pel + 4 quarter-pel = 8 positions + pred_me_distortion to pa_me_distortion deviation on <BR>3 = 7x5 full-pel search +  (H + V + D only ~ the best) sub-pel refinement = up to 6 half-pel + up to 6  quarter-pel = up to 12 positions + pred_me_distortion to pa_me_distortion deviation on <BR>4 = 7x5 full-pel search +  (H + V + D) sub-pel refinement = 8 half-pel + 8 quarter-pel = 16 positions + pred_me_distortion to pa_me_distortion deviation on <BR>5 = 7x5 full-pel search +  (H + V + D) sub-pel refinement = 8 half-pel + 8 quarter-pel = 16 positions + pred_me_distortion to pa_me_distortion deviation off |
+| **CompoundLevel** | -compound | [0-2, -1 for auto] | AUTO | Set compound mode: <BR>-1 = AUTO<BR>0 = OFF: No compond mode search : AVG only <BR>1 = ON: compond mode search: AVG/DIST/DIFF <BR>2 = ON: AVG/DIST/DIFF/WEDGE |
+| **RestorationFilter** | -restoration-filtering | [0/1, -1 for auto] | AUTO | Enable restoration filtering , 0 = OFF, 1 = ON, -1 = AUTO|
+| **Atb** | -atb | [0/1, -1 for auto] | AUTO | Enable atb , 0 = OFF, 1 = ON, -1 = AUTO|
+| **Cdf** | -cdf | [0/1, -1 for auto] | AUTO | Enable cdf, 0 = OFF, 1 = ON, -1 = AUTO|
+| **UpdateCdf** | -updt-cdf | [0/1, -1 for auto] | AUTO | Enable update cdf, 0 = OFF, 1 = ON, -1 = AUTO|
+| **FrameEndCdfUpdate** | -framend-cdf-upd-mode | [0/1, -1 for auto] | AUTO | Enable frame end cdf update mode, 0 = OFF, 1 = ON, -1 = AUTO|
+| **CombineClass12** | -class-12 | [0/1, -1 for auto] | AUTO | Enable combine MD Class1&2, 0 = OFF, 1 = ON, -1 = AUTO|
+| **EdgeSkipAngleIntra** | --intra-edge-skp | [0/1, -1 for auto] | AUTO | Enable skip angle intra based on edge, 0 = OFF, 1 = ON, -1 = AUTO|
+| **InterIntraCompound** | -interintra-comp | [0/1, -1 for auto] | AUTO | Enable inter intra compound, 0 = OFF, 1 = ON, -1 = AUTO|
+| **FractionalSearch64** | -frac-search-64 | [0/1, -1 for auto] | AUTO | Enable fractional search for 64x64, 0 = OFF, 1 = ON, -1 = AUTO|
+| **GlobalMvInjection** | -global-motion-inject | [0/1, -1 for auto] | AUTO | Enable global Motion Vector injection, 0 = OFF, 1 = ON, -1 = AUTO|
+| **Mfmv** | -mfmv | [0/1, -1 for auto] | AUTO | Enable motion field motion vector, 0 = OFF, 1 = ON, -1 = AUTO|
+| **QuantFp** | -quantize-fp | [0/1, -1 for auto] | AUTO | Enable perform quantize fp, 0 = OFF, 1 = ON, -1 = AUTO|
+| **RedundantBlock** | -redundant-blk | [0/1, -1 for auto] | AUTO | Enable redundant block, 0 = OFF, 1 = ON, -1 = AUTO|
+| **Trellis** | -trellis | [0/1, -1 for auto] | AUTO | Enable trellis quant coefficient optimization, 0 = OFF, 1 = ON, -1 = AUTO|
+| **SpatialSSEfl** | -spatial-sse-fl | [0/1, -1 for auto] | AUTO | Enable spatial sse full loop, 0 = OFF, 1 = ON, -1 = AUTO|
+| **Subpel** | -subpel | [0/1, -1 for auto] | AUTO | Enable subpel, 0 = OFF, 1 = ON, -1 = AUTO|
+| **OverBoundryBlock** | -over-bndry-blk | [0/1, -1 for auto] | AUTO | Enable over boundary block mode, 0 = OFF, 1 = ON, -1 = AUTO|
+| **NewNearestCombInjection** | -new-nrst-near-comb | [0/1, -1 for auto] | AUTO | Enable new nearest near comb injection, 0 = OFF, 1 = ON, -1 = AUTO|
+| **nx4ParentMvInjection** | -nx4-4xn-mv-inject | [0/1, -1 for auto] | AUTO | Enable nx4 4xn parent mv injection, 0 = OFF, 1 = ON, -1 = AUTO|
+| **PruneUnipredMe** | -prune-unipred-me | [0/1, -1 for auto] | AUTO | Enable prune unipred at me, 0 = OFF, 1 = ON, -1 = AUTO|
+| **PruneRefRecPart** | -prune-ref-rec-part | [0/1, -1 for auto] | AUTO | Enable prune prune ref frame for rec partitions, 0 = OFF, 1 = ON, -1 = AUTO|
+| **NsqTable** | --nsq-table-use | [0/1, -1 for auto] | AUTO | Enable nsq table, 0 = OFF, 1 = ON, -1 = AUTO|
 | **ExtBlockFlag** | -ext-block | [0 - 1] | Depends on –enc-mode | Enable the non-square block 0=OFF, 1= ON |
 | **ScreenContentMode** | -scm | [0 - 2] | 2 | Enable Screen Content Optimization mode (0: OFF, 1: ON, 2: Content Based Detection) |
 | **SearchAreaWidth** | -search-w | [1 - 256] | Depends on input resolution | Search Area in Width |
@@ -183,10 +209,9 @@ The encoder parameters present in the `Sample.cfg` file are listed in this table
 | **TileRow** | -tile-rows | [0-6] | 0 | log2 of tile rows |
 | **TileCol** | -tile-columns | [0-6] | 0 | log2 of tile columns |
 | **UnrestrictedMotionVector** | -umv | [0-1] | 1 | Enables or disables unrestriced motion vectors, 0 = OFF(motion vectors are constrained within tile boundary), 1 = ON. For MCTS support, set -umv 0 |
+| **ChromaMode** | -chroma | [0-3] | Auto | Chroma Mode <br>0 = Full chroma search @ MD  <br>1 = Fast chroma search @ MD  <br>2 = Chroma blind @ MD + CFL @ EP <br>3 = Chroma blind @ MD + no CFL @ EP |
 | **PaletteMode** | -palette | [0 - 6] | -1 | Enable Palette mode (-1: Auto Mode(ON at level6 when SC is detected), 0: OFF 1: ON Level 1, ...6: ON Level6 ) |
 | **SquareWeight** | -sqw | 0 for off and any whole number percentage | 100 | Weighting applied to square/h/v shape costs when deciding if a and b shapes could be skipped. Set to 100 for neutral weighting, lesser than 100 for faster encode and BD-Rate loss, and greater than 100 for slower encode and BD-Rate gain|
-| **ChromaMode** | -chroma | [0-3] | Auto | Chroma Mode <br>0 = Full chroma search @ MD  <br>1 = Fast chroma search @ MD  <br>2 = Chroma blind @ MD + CFL @ EP <br>3 = Chroma blind @ MD + no CFL @ EP |
-
 ## Appendix A Encoder Parameters
 
 ### 1. Thread management parameters

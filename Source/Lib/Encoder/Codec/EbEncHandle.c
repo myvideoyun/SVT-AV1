@@ -1995,12 +1995,10 @@ void SetParamBasedOnInput(SequenceControlSet *sequence_control_set_ptr)
     //0: MRP Mode 0 (4,3)
     //1: MRP Mode 1 (2,2)
     sequence_control_set_ptr->mrp_mode = (uint8_t) (sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 0 : 1;
-    if (sequence_control_set_ptr->static_config.enable_cdf == AUTO_MODE)
-        //0: ON
-        //1: OFF
-        sequence_control_set_ptr->cdf_mode = (uint8_t)(sequence_control_set_ptr->static_config.enc_mode <= ENC_M6) ? 0 : 1;
-    else
-        sequence_control_set_ptr->cdf_mode = sequence_control_set_ptr->static_config.enable_cdf;
+
+    //0: ON
+    //1: OFF
+    sequence_control_set_ptr->cdf_mode = (uint8_t)(sequence_control_set_ptr->static_config.enc_mode <= ENC_M6) ? 0 : 1;
 
     //0: NSQ absent
     //1: NSQ present
@@ -2013,16 +2011,17 @@ void SetParamBasedOnInput(SequenceControlSet *sequence_control_set_ptr)
         sequence_control_set_ptr->down_sampling_method_me_search = ME_FILTERED_DOWNSAMPLED;
     else
         sequence_control_set_ptr->down_sampling_method_me_search = ME_DECIMATED_DOWNSAMPLED;
+
+    // Set over_boundary_block_mode     Settings
+    // 0                            0: not allowed
+    // 1                            1: allowed
     if (sequence_control_set_ptr->static_config.over_bndry_blk == AUTO_MODE)
-        // Set over_boundary_block_mode     Settings
-        // 0                            0: not allowed
-        // 1                            1: allowed
         if (sequence_control_set_ptr->static_config.enc_mode == ENC_M0)
             sequence_control_set_ptr->over_boundary_block_mode = 1;
         else
             sequence_control_set_ptr->over_boundary_block_mode = 0;
     else
-        sequence_control_set_ptr->over_boundary_block_mode = sequence_control_set_ptr->static_config.over_bndry_blk;
+            sequence_control_set_ptr->over_boundary_block_mode = 0;
 
     if (sequence_control_set_ptr->static_config.enable_mfmv == AUTO_MODE)
         sequence_control_set_ptr->mfmv_enabled = (uint8_t)(sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 1 : 0;
@@ -2130,21 +2129,22 @@ void CopyApiFromApp(
     sequence_control_set_ptr->static_config.fract_search_64 = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->fract_search_64;
     // global mv injection
     sequence_control_set_ptr->static_config.inject_global_mv = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->inject_global_mv;
+
     // motion field motion vector
     sequence_control_set_ptr->static_config.enable_mfmv = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_mfmv;
-    // quantize fp                                                       
+    // quantize fp
     sequence_control_set_ptr->static_config.quant_fp = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->quant_fp;
-    // redundant block                                                   
+    // redundant block
     sequence_control_set_ptr->static_config.enable_redundant_blk = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_redundant_blk;
-    //trellis                                                            
+    //trellis
     sequence_control_set_ptr->static_config.enable_trellis = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_trellis;
-    // spatial sse in full loop                                          
+    // spatial sse in full loop
     sequence_control_set_ptr->static_config.spatial_sse_fl = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->spatial_sse_fl;
-    // update cdf                                                        
+    // update cdf
     sequence_control_set_ptr->static_config.update_cdf = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->update_cdf;
-    // subpel                                                            
+    // subpel
     sequence_control_set_ptr->static_config.enable_subpel = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_subpel;
-    // over boundry block mode                                           
+    // over boundry block mode
     sequence_control_set_ptr->static_config.over_bndry_blk = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->over_bndry_blk;
     // new nearest comb injection
     sequence_control_set_ptr->static_config.new_nearest_comb_inject = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->new_nearest_comb_inject;
@@ -2166,14 +2166,15 @@ void CopyApiFromApp(
     sequence_control_set_ptr->static_config.chroma_level = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->chroma_level;
 
     // Predictive ME
-    sequence_control_set_ptr->static_config.pred_me  = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->pred_me;
+    sequence_control_set_ptr->static_config.pred_me = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->pred_me;
     // BiPred 3x3 injection
     sequence_control_set_ptr->static_config.bipred_3x3_inject = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->bipred_3x3_inject;
     // Compound mode
-    sequence_control_set_ptr->static_config.coumpound_level = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->coumpound_level;
+    sequence_control_set_ptr->static_config.compound_level = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->compound_level;
+
     // Filter intra prediction
     sequence_control_set_ptr->static_config.enable_filter_intra = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_filter_intra;
-	
+
     // ME Tools
     sequence_control_set_ptr->static_config.use_default_me_hme = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->use_default_me_hme;
     sequence_control_set_ptr->static_config.enable_hme_flag = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_hme_flag;
@@ -2725,7 +2726,7 @@ EbErrorType eb_svt_enc_init_parameter(
     config_ptr->chroma_level = AUTO_MODE;
     config_ptr->pred_me = AUTO_MODE;
     config_ptr->bipred_3x3_inject = AUTO_MODE;
-    config_ptr->coumpound_level = AUTO_MODE;
+    config_ptr->compound_level = AUTO_MODE;
     config_ptr->enable_filter_intra = EB_TRUE;
     config_ptr->in_loop_me_flag = EB_TRUE;
     config_ptr->ext_block_flag = EB_FALSE;

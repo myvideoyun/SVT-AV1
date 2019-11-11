@@ -552,15 +552,9 @@ void reset_mode_decision(
             enable_wm = EB_FALSE;
         else
 #if WARP_UPDATE
-#if M1_wm
             enable_wm = (MR_MODE ||
             (picture_control_set_ptr->parent_pcs_ptr->enc_mode == ENC_M0 && picture_control_set_ptr->parent_pcs_ptr->is_used_as_reference_flag) ||
-                (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5 && picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index == 0)) ? EB_TRUE : EB_FALSE;
-#else
-            enable_wm = (MR_MODE ||
-            (picture_control_set_ptr->parent_pcs_ptr->enc_mode == ENC_M0 && picture_control_set_ptr->parent_pcs_ptr->is_used_as_reference_flag) ||
-                (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5 && picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index == 0)) ? EB_TRUE : EB_FALSE;
-#endif
+            (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5 && picture_control_set_ptr->parent_pcs_ptr->temporal_layer_index == 0)) ? EB_TRUE : EB_FALSE;
 #else
             enable_wm = (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5) || MR_MODE ? EB_TRUE : EB_FALSE;
 #endif
@@ -570,7 +564,6 @@ void reset_mode_decision(
     }
     else
         enable_wm = sequence_control_set_ptr->static_config.enable_warped_motion;
-
 
     frm_hdr->allow_warped_motion = enable_wm
         && !(frm_hdr->frame_type == KEY_FRAME || frm_hdr->frame_type == INTRA_ONLY_FRAME)
@@ -583,7 +576,7 @@ void reset_mode_decision(
     // 2                                            OBMC @(MVP, PME and ME) + Opt NICs
     // 3                                            OBMC @(MVP, PME ) + Opt NICs
     // 4                                            OBMC @(MVP, PME ) + Opt2 NICs
-    if (sequence_control_set_ptr->static_config.enable_obmc==AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.enable_obmc == AUTO_MODE) {
         if (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M0)
             picture_control_set_ptr->parent_pcs_ptr->pic_obmc_mode =
             picture_control_set_ptr->parent_pcs_ptr->sc_content_detected == 0 && picture_control_set_ptr->slice_type != I_SLICE ? 2 : 0;

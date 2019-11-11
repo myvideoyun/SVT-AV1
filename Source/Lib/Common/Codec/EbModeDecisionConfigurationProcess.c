@@ -2113,7 +2113,7 @@ EbErrorType signal_derivation_mode_decision_config_kernel_oq(
 
     context_ptr->adp_level = picture_control_set_ptr->parent_pcs_ptr->enc_mode;
 
-    if (sequence_control_set_ptr->static_config.update_cdf == AUTO_MODE)
+    if (sequence_control_set_ptr->static_config.update_cdf == AUTO_MODE) {
         if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M6)
                 picture_control_set_ptr->update_cdf = 1;
@@ -2121,7 +2121,7 @@ EbErrorType signal_derivation_mode_decision_config_kernel_oq(
                 picture_control_set_ptr->update_cdf = 0;
         else
             picture_control_set_ptr->update_cdf = (picture_control_set_ptr->parent_pcs_ptr->enc_mode <= ENC_M5) ? 1 : 0;
-
+    }
     else
         picture_control_set_ptr->update_cdf = sequence_control_set_ptr->static_config.update_cdf;
 

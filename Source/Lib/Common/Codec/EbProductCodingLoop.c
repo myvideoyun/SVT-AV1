@@ -7592,12 +7592,12 @@ void md_encode_block(
     for (uint8_t ref_idx = 0; ref_idx < MAX_REF_TYPE_CAND; ref_idx++)
         context_ptr->ref_best_cost_sq_table[ref_idx] = MAX_CU_COST;
 
-#if PREDICT_NSQ_SHAPE
     EbBool is_nsq_table_used = (picture_control_set_ptr->slice_type == !I_SLICE &&
         picture_control_set_ptr->parent_pcs_ptr->pic_depth_mode <= PIC_ALL_C_DEPTH_MODE &&
         picture_control_set_ptr->parent_pcs_ptr->nsq_search_level >= NSQ_SEARCH_LEVEL1 &&
         picture_control_set_ptr->parent_pcs_ptr->nsq_search_level < NSQ_SEARCH_FULL) ? EB_TRUE : EB_FALSE;
 
+#if PREDICT_NSQ_SHAPE
     if (sequence_control_set_ptr->static_config.nsq_table == AUTO_MODE)
 #if M1_nsq
         is_nsq_table_used = is_nsq_table_used;
@@ -7606,7 +7606,6 @@ void md_encode_block(
 #endif
     else
         is_nsq_table_used = sequence_control_set_ptr->static_config.nsq_table;
-
 #if ADJUST_NSQ_RANK_BASED_ON_NEIGH
     if (is_nsq_table_used) {
         if (context_ptr->blk_geom->shape == PART_N) {
@@ -7630,15 +7629,10 @@ void md_encode_block(
     }
 #endif
 #else
-    EbBool is_nsq_table_used = (picture_control_set_ptr->slice_type == !I_SLICE &&
-        picture_control_set_ptr->parent_pcs_ptr->pic_depth_mode <= PIC_ALL_C_DEPTH_MODE &&
-        picture_control_set_ptr->parent_pcs_ptr->nsq_search_level >= NSQ_SEARCH_LEVEL1 &&
-        picture_control_set_ptr->parent_pcs_ptr->nsq_search_level < NSQ_SEARCH_FULL) ? EB_TRUE : EB_FALSE;
-    if (sequence_control_set_ptr->static_config.nsq_table == AUTO_MODE) {
-        is_nsq_table_used = picture_control_set_ptr->enc_mode == ENC_M0 ? EB_FALSE : is_nsq_table_used;
-    }
+    if (sequence_control_set_ptr->static_config.nsq_table == AUTO_MODE)
+        is_nsq_table_used = picture_control_set_ptr->enc_mode == ENC_M0 ?  EB_FALSE : is_nsq_table_used;
     else
-       is_nsq_table_used = sequence_control_set_ptr->static_config.nsq_table;
+        is_nsq_table_used = sequence_control_set_ptr->static_config.nsq_table;
     if (is_nsq_table_used) {
         if (context_ptr->blk_geom->shape == PART_N) {
             order_nsq_table(

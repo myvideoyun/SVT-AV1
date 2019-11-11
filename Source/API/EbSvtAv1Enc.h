@@ -222,18 +222,13 @@ typedef struct EbSvtAv1EncConfiguration
 
     /* Warped motion
     *
-    * Default is 0. */
+    * Default is -1. */
     int8_t                  enable_warped_motion;
 
     /* Global motion
     *
     * Default is 1. */
     EbBool                   enable_global_motion;
-
-    /* Restoration filtering
-    *
-    * Default is 1. */
-    int8_t                   enable_restoration_filtering;
 
     /* edge based skip angle intra
     *
@@ -269,6 +264,11 @@ typedef struct EbSvtAv1EncConfiguration
     *
     * Default is -1. */
     int8_t                   combine_class_12;
+
+    /* Restoration filtering
+    *
+    * Default is -1. */
+    int8_t                   enable_restoration_filtering;
 
     /* motion field motion vector
     *
@@ -330,22 +330,22 @@ typedef struct EbSvtAv1EncConfiguration
     /* Predictive Me
     *
     * Default is -1. */
-    int32_t                 pred_me;
+    int8_t                 pred_me;
 
     /* Bipred 3x3 Injection
     *
     * Default is -1. */
-    int32_t                bipred_3x3_inject;
+    int8_t                bipred_3x3_inject;
 
     /* Compound Mode
     *
     * Default is -1. */
-    int32_t                coumpound_level;
+    int8_t                compound_level;
 
     /* OBMC
     *
     * Default is -1. */
-    int32_t                   enable_obmc;
+    int8_t                   enable_obmc;
 
     /* Chroma mode
      *
@@ -356,7 +356,7 @@ typedef struct EbSvtAv1EncConfiguration
      * CHROMA_MODE_3  3     Chroma blind @ MD + no CFL @ EP
      *
      * Default is -1 (AUTO) */
-    int32_t                   chroma_level;
+    int8_t                   chroma_level;
 
     /* Filter intra prediction
     *

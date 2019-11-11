@@ -65,6 +65,7 @@
 #define SEPERATE_FILDS_TOKEN            "-separate-fields"
 #define INTRA_REFRESH_TYPE_TOKEN        "-irefresh-type" // no Eval
 #define LOOP_FILTER_DISABLE_TOKEN       "-dlf"
+#define LOCAL_WARPED_ENABLE_TOKEN       "-local-warp"
 #define RESTORATION_ENABLE_TOKEN        "-restoration-filtering"
 #define ATB_ENABLE_TOKEN                "-atb"
 #define CDF_ENABLE_TOKEN                "-cdf"
@@ -90,6 +91,7 @@
 #define LOCAL_WARPED_ENABLE_TOKEN       "-local-warp"
 #define GLOBAL_MOTION_ENABLE_TOKEN      "-global-motion"
 #define OBMC_TOKEN                      "-obmc"
+#define CHROMA_LEVEL_TOKEN              "-chroma"
 #define PRED_ME_TOKEN                   "-pred-me"
 #define BIPRED_3x3_TOKEN                "-bipred-3x3"
 #define COMPOUND_LEVEL_TOKEN            "-compound"
@@ -135,7 +137,6 @@
 #define TILE_COL_TOKEN                   "-tile-columns"
 
 #define SQ_WEIGHT_TOKEN                 "-sqw"
-#define CHROMA_LEVEL_TOKEN               "-chroma"
 
 #define SCENE_CHANGE_DETECTION_TOKEN    "-scd"
 #define INJECTOR_TOKEN                  "-inj"  // no Eval
@@ -267,40 +268,41 @@ static void SetCfgQp                            (const char *value, EbConfig *cf
 static void SetCfgUseQpFile                     (const char *value, EbConfig *cfg) {cfg->use_qp_file = (EbBool)strtol(value, NULL, 0); };
 static void SetCfgFilmGrain                     (const char *value, EbConfig *cfg) { cfg->film_grain_denoise_strength = strtol(value, NULL, 0); };  //not bool to enable possible algorithm extension in the future
 static void SetDisableDlfFlag                   (const char *value, EbConfig *cfg) {cfg->disable_dlf_flag = (EbBool)strtoul(value, NULL, 0);};
-static void SetEnableLocalWarpedMotionFlag      (const char *value, EbConfig *cfg) {cfg->enable_warped_motion           = (int8_t)strtoul(value, NULL, 0);};
+static void SetEnableLocalWarpedMotionFlag      (const char *value, EbConfig *cfg) {cfg->enable_warped_motion = (int8_t)strtol(value, NULL, 0);};
 static void SetEnableGlobalMotionFlag           (const char *value, EbConfig *cfg) {cfg->enable_global_motion = (EbBool)strtoul(value, NULL, 0);};
-static void SetEnableRestorationFilterFlag      (const char *value, EbConfig *cfg) { cfg->enable_restoration_filtering  = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableRestorationFilterFlag      (const char *value, EbConfig *cfg) { cfg->enable_restoration_filtering = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableAtbFlag                    (const char *value, EbConfig *cfg) { cfg->enable_atb = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableCdfFlag                    (const char *value, EbConfig *cfg) { cfg->enable_cdf = (int8_t)strtol(value, NULL, 0);};
+static void SetClass12Flag                      (const char *value, EbConfig *cfg) { cfg->combine_class_12 = (int8_t)strtol(value, NULL, 0);};
+static void SetEdgeSkipAngleIntraFlag           (const char *value, EbConfig *cfg) { cfg->edge_skp_angle_intra = (int8_t)strtol(value, NULL, 0);};
+static void SetInterIntraCompoundFlag           (const char *value, EbConfig *cfg) { cfg->inter_intra_compound = (int8_t)strtol(value, NULL, 0);};
+static void SetFractionalSearch64Flag           (const char *value, EbConfig *cfg) { cfg->fract_search_64 = (int8_t)strtol(value, NULL, 0);};
+static void SetInjectGlobalMVFlag               (const char *value, EbConfig *cfg) { cfg->inject_global_mv = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableMfmvFlag                   (const char *value, EbConfig *cfg) { cfg->enable_mfmv = (int8_t)strtol(value, NULL, 0);};
+static void SetQuantFpFlag                      (const char *value, EbConfig *cfg) { cfg->quant_fp = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableRedundantBlkFlag           (const char *value, EbConfig *cfg) { cfg->enable_redundant_blk = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableTrellisFlag                (const char *value, EbConfig *cfg) { cfg->enable_trellis = (int8_t)strtol(value, NULL, 0);};
+static void SetSpatialSseFlFlag                 (const char *value, EbConfig *cfg) { cfg->spatial_sse_fl = (int8_t)strtol(value, NULL, 0);};
+static void SetUpdateCdfFlag                    (const char *value, EbConfig *cfg) { cfg->update_cdf = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableSubpelFlag                 (const char *value, EbConfig *cfg) { cfg->enable_subpel = (int8_t)strtol(value, NULL, 0);};
+static void SetOverBndryBlkFlag                 (const char *value, EbConfig *cfg) { cfg->over_bndry_blk = (int8_t)strtol(value, NULL, 0);};
+static void SetNewNearestCombInjectFlag         (const char *value, EbConfig *cfg) { cfg->new_nearest_comb_inject = (int8_t)strtol(value, NULL, 0);};
+static void SetNx4_4xnParentMvInjectFlag        (const char *value, EbConfig *cfg) { cfg->nx4_4xn_parent_mv_inject= (int8_t)strtol(value, NULL, 0);};
+static void SetPruneUnipredMeFlag               (const char *value, EbConfig *cfg) { cfg->prune_unipred_me = (int8_t)strtol(value, NULL, 0);};
+static void SetPruneRefRecPartFlag              (const char *value, EbConfig *cfg) { cfg->prune_ref_rec_part = (int8_t)strtol(value, NULL, 0);};
+static void SetNsqTableFlag                     (const char *value, EbConfig *cfg) { cfg->nsq_table = (int8_t)strtol(value, NULL, 0);};
+static void SetFrameEndCdfUpdateFlag            (const char *value, EbConfig *cfg) { cfg->frame_end_cdf_update = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableObmcFlag                   (const char *value, EbConfig *cfg) {cfg->enable_obmc = (int8_t)strtol(value, NULL, 0);};
 static void SetChromaLevel                      (const char *value, EbConfig *cfg) { cfg->chroma_level  = (int8_t)strtol(value, NULL, 0);};
-static void SetEnableAtbFlag                    (const char *value, EbConfig *cfg) { cfg->enable_atb              = (int8_t)strtol(value, NULL, 0);};
-static void SetEnableCdfFlag                    (const char *value, EbConfig *cfg) { cfg->enable_cdf              = (int8_t)strtol(value, NULL, 0);};
-static void SetClass12Flag                      (const char *value, EbConfig *cfg) { cfg->combine_class_12        = (int8_t)strtol(value, NULL, 0);};
-static void SetEdgeSkipAngleIntraFlag           (const char *value, EbConfig *cfg) { cfg->edge_skp_angle_intra    = (int8_t)strtol(value, NULL, 0);};
-static void SetInterIntraCompoundFlag           (const char *value, EbConfig *cfg) { cfg->inter_intra_compound    = (int8_t)strtol(value, NULL, 0);};
-static void SetFractionalSearch64Flag           (const char *value, EbConfig *cfg) { cfg->fract_search_64         = (int8_t)strtol(value, NULL, 0);};
-static void SetInjectGlobalMVFlag               (const char *value, EbConfig *cfg) { cfg->inject_global_mv        = (int8_t)strtol(value, NULL, 0);};
-static void SetEnableMfmvFlag                   (const char *value, EbConfig *cfg) { cfg->enable_mfmv             = (int8_t)strtoul(value, NULL, 0);};
-static void SetQuantFpFlag                      (const char *value, EbConfig *cfg) { cfg->quant_fp                = (int8_t)strtoul(value, NULL, 0);};
-static void SetEnableRedundantBlkFlag           (const char *value, EbConfig *cfg) { cfg->enable_redundant_blk    = (int8_t)strtoul(value, NULL, 0);};
-static void SetEnableTrellisFlag                (const char *value, EbConfig *cfg) { cfg->enable_trellis          = (int8_t)strtoul(value, NULL, 0);};
-static void SetSpatialSseFlFlag                 (const char *value, EbConfig *cfg) { cfg->spatial_sse_fl          = (int8_t)strtoul(value, NULL, 0);};
-static void SetUpdateCdfFlag                    (const char *value, EbConfig *cfg) { cfg->update_cdf              = (int8_t)strtoul(value, NULL, 0);};
-static void SetEnableSubpelFlag                 (const char *value, EbConfig *cfg) { cfg->enable_subpel           = (int8_t)strtoul(value, NULL, 0);};
-static void SetOverBndryBlkFlag                 (const char *value, EbConfig *cfg) { cfg->over_bndry_blk          = (int8_t)strtoul(value, NULL, 0);};
-static void SetNewNearestCombInjectFlag         (const char *value, EbConfig *cfg) { cfg->new_nearest_comb_inject = (int8_t)strtoul(value, NULL, 0);};
-static void SetNx4_4xnParentMvInjectFlag        (const char *value, EbConfig *cfg) { cfg->nx4_4xn_parent_mv_inject= (int8_t)strtoul(value, NULL, 0);};
-static void SetPruneUnipredMeFlag               (const char *value, EbConfig *cfg) { cfg->prune_unipred_me        = (int8_t)strtoul(value, NULL, 0);};
-static void SetPruneRefRecPartFlag              (const char *value, EbConfig *cfg) { cfg->prune_ref_rec_part      = (int8_t)strtoul(value, NULL, 0);};
-static void SetNsqTableFlag                     (const char *value, EbConfig *cfg) { cfg->nsq_table               = (int8_t)strtoul(value, NULL, 0);};
-static void SetFrameEndCdfUpdateFlag            (const char *value, EbConfig *cfg) { cfg->frame_end_cdf_update    = (int8_t)strtoul(value, NULL, 0);};
-static void SetEnableObmcFlag                   (const char *value, EbConfig *cfg) {cfg->enable_obmc              = (int32_t)strtoul(value, NULL, 0);};
-static void SetPredictiveMeFlag                 (const char *value, EbConfig *cfg) { cfg->pred_me                 = (int32_t)strtoul(value, NULL, 0); };
-static void SetBipred3x3injectFlag              (const char *value, EbConfig *cfg) { cfg->bipred_3x3_inject       = (int32_t)strtoul(value, NULL, 0); };
-static void SetCompoundLevelFlag                (const char *value, EbConfig *cfg) { cfg->coumpound_level         = (int32_t)strtoul(value, NULL, 0); };
+static void SetPredictiveMeFlag                 (const char *value, EbConfig *cfg) { cfg->pred_me = (int8_t)strtol(value, NULL, 0); };
+static void SetBipred3x3injectFlag              (const char *value, EbConfig *cfg) { cfg->bipred_3x3_inject = (int8_t)strtol(value, NULL, 0); };
+static void SetCompoundLevelFlag                (const char *value, EbConfig *cfg) { cfg->compound_level = (int8_t)strtol(value, NULL, 0); };
 static void SetEnableFilterIntraFlag            (const char *value, EbConfig *cfg) {cfg->enable_filter_intra = (EbBool)strtoul(value, NULL, 0);};
 static void SetEnableHmeFlag                    (const char *value, EbConfig *cfg) {cfg->enable_hme_flag = (EbBool)strtoul(value, NULL, 0);};
 static void SetEnableHmeLevel0Flag              (const char *value, EbConfig *cfg) {cfg->enable_hme_level0_flag = (EbBool)strtoul(value, NULL, 0);};
 static void SetTileRow                          (const char *value, EbConfig *cfg) { cfg->tile_rows = strtoul(value, NULL, 0); };
 static void SetTileCol                          (const char *value, EbConfig *cfg) { cfg->tile_columns = strtoul(value, NULL, 0); };
+
 static void SetSceneChangeDetection             (const char *value, EbConfig *cfg) {cfg->scene_change_detection = strtoul(value, NULL, 0);};
 static void SetLookAheadDistance                (const char *value, EbConfig *cfg) {cfg->look_ahead_distance = strtoul(value, NULL, 0);};
 static void SetRateControlMode                  (const char *value, EbConfig *cfg) {cfg->rate_control_mode = strtoul(value, NULL, 0);};
@@ -436,26 +438,37 @@ config_entry_t config_entry[] = {
 
     // DLF
     { SINGLE_INPUT, LOOP_FILTER_DISABLE_TOKEN, "LoopFilterDisable", SetDisableDlfFlag },
+    // ATB
+    { SINGLE_INPUT, ATB_ENABLE_TOKEN, "Atb", SetEnableAtbFlag },
+    // CDF
+    { SINGLE_INPUT, CDF_ENABLE_TOKEN, "Cdf", SetEnableCdfFlag },
+    // CLASS 12
+    { SINGLE_INPUT, CLASS_12_TOKEN, "CombineClass12", SetClass12Flag },
+    // EDGE SKIP ANGLE INTRA
+    { SINGLE_INPUT, EDGE_SKIP_ANGLE_INTRA_TOKEN, "EdgeSkipAngleIntra", SetEdgeSkipAngleIntraFlag },
+    // INTER INTRA COMPOUND
+    { SINGLE_INPUT, INTER_INTRA_COMPOUND_TOKEN, "InterIntraCompound", SetInterIntraCompoundFlag },
+    // FRACTIONAL SEARCH 64x64
+    { SINGLE_INPUT, FRAC_SEARCH_64_TOKEN, "FractionalSearch64", SetFractionalSearch64Flag },
+    // GLOBAL MV INJECTION
+    { SINGLE_INPUT, GLOBAL_MV_INJECT_TOKEN, "GlobalMvInjection", SetInjectGlobalMVFlag },
     // RESTORATION
+
     { SINGLE_INPUT, RESTORATION_ENABLE_TOKEN, "RestorationFilter", SetEnableRestorationFilterFlag },
-
-    // CHROMA
-    { SINGLE_INPUT, CHROMA_LEVEL_TOKEN, "ChromaLevel", SetChromaLevel },
-
-    { SINGLE_INPUT, MFMV_ENABLE_TOKEN             , "Mfmv", SetEnableMfmvFlag           },
-    { SINGLE_INPUT, QUANT_FP_TOKEN                ,  "QuantFp", SetQuantFpFlag              },
-    { SINGLE_INPUT, REDUNDANT_BLK_TOKEN           ,  "RedudnantBlock", SetEnableRedundantBlkFlag   },
-    { SINGLE_INPUT, TRELLIS_ENABLE_TOKEN          , "Trellis", SetEnableTrellisFlag        },
-    { SINGLE_INPUT, SPATIAL_SSE_FL_TOKEN          , "SpatialSSEfl", SetSpatialSseFlFlag         },
-    { SINGLE_INPUT, UPDATE_CDF_TOKEN              , "UpdateCdf", SetUpdateCdfFlag            },
-    { SINGLE_INPUT, SUBPEL_TOKEN                  , "Subpel", SetEnableSubpelFlag         },
-    { SINGLE_INPUT, OVR_BNDRY_BLK_TOKEN           , "OverBoundryBlock", SetOverBndryBlkFlag         },
+    { SINGLE_INPUT, MFMV_ENABLE_TOKEN, "Mfmv", SetEnableMfmvFlag },
+    { SINGLE_INPUT, QUANT_FP_TOKEN, "QuantFp", SetQuantFpFlag },
+    { SINGLE_INPUT, REDUNDANT_BLK_TOKEN, "RedundantBlock", SetEnableRedundantBlkFlag },
+    { SINGLE_INPUT, TRELLIS_ENABLE_TOKEN, "Trellis", SetEnableTrellisFlag },
+    { SINGLE_INPUT, SPATIAL_SSE_FL_TOKEN, "SpatialSSEfl", SetSpatialSseFlFlag },
+    { SINGLE_INPUT, UPDATE_CDF_TOKEN, "UpdateCdf", SetUpdateCdfFlag },
+    { SINGLE_INPUT, SUBPEL_TOKEN, "Subpel", SetEnableSubpelFlag },
+    { SINGLE_INPUT, OVR_BNDRY_BLK_TOKEN, "OverBoundryBlock", SetOverBndryBlkFlag },
     { SINGLE_INPUT, NEW_NEAREST_COMB_INJECT_TOKEN , "NewNearestCombInjection", SetNewNearestCombInjectFlag },
-    { SINGLE_INPUT, NX4_4XN_MV_INJECT_TOKEN       , "nx4ParentMvInjection", SetNx4_4xnParentMvInjectFlag},
-    { SINGLE_INPUT, PRUNE_UNIPRED_ME_TOKEN        , "PruneUnipredMe", SetPruneUnipredMeFlag       },
-    { SINGLE_INPUT, PRUNE_REF_REC_PART_TOKEN      , "PruneRefRecPart", SetPruneRefRecPartFlag      },
-    { SINGLE_INPUT, NSQ_TABLE_TOKEN               , "NsqTable", SetNsqTableFlag             },
-    { SINGLE_INPUT, FRAME_END_CDF_UPDATE_TOKEN    , "FrameEndCdfUpdate", SetFrameEndCdfUpdateFlag    },
+    { SINGLE_INPUT, NX4_4XN_MV_INJECT_TOKEN, "nx4ParentMvInjection", SetNx4_4xnParentMvInjectFlag},
+    { SINGLE_INPUT, PRUNE_UNIPRED_ME_TOKEN, "PruneUnipredMe", SetPruneUnipredMeFlag },
+    { SINGLE_INPUT, PRUNE_REF_REC_PART_TOKEN, "PruneRefRecPart", SetPruneRefRecPartFlag },
+    { SINGLE_INPUT, NSQ_TABLE_TOKEN, "NsqTable", SetNsqTableFlag },
+    { SINGLE_INPUT, FRAME_END_CDF_UPDATE_TOKEN, "FrameEndCdfUpdate", SetFrameEndCdfUpdateFlag },
 
     // LOCAL WARPED MOTION
     { SINGLE_INPUT, LOCAL_WARPED_ENABLE_TOKEN, "LocalWarpedMotion", SetEnableLocalWarpedMotionFlag },
@@ -479,9 +492,8 @@ config_entry_t config_entry[] = {
 
     // OBMC
     { SINGLE_INPUT, OBMC_TOKEN, "Obmc", SetEnableObmcFlag },
-    // Filter Intra
-    { SINGLE_INPUT, FILTER_INTRA_TOKEN, "FilterIntra", SetEnableFilterIntraFlag },
-
+    // CHROMA
+    { SINGLE_INPUT, CHROMA_LEVEL_TOKEN, "ChromaLevel", SetChromaLevel },
     // PREDICTIVE ME
     { SINGLE_INPUT, PRED_ME_TOKEN, "PredMe", SetPredictiveMeFlag },
     // BIPRED 3x3 INJECTION
@@ -489,6 +501,8 @@ config_entry_t config_entry[] = {
     // COMPOUND MODE
     { SINGLE_INPUT, COMPOUND_LEVEL_TOKEN, "CompoundLevel", SetCompoundLevelFlag },
 
+    // Filter Intra
+    { SINGLE_INPUT, FILTER_INTRA_TOKEN, "FilterIntra", SetEnableFilterIntraFlag },
     // ME Tools
     { SINGLE_INPUT, USE_DEFAULT_ME_HME_TOKEN, "UseDefaultMeHme", SetCfgUseDefaultMeHme },
     { SINGLE_INPUT, HME_ENABLE_TOKEN, "HME", SetEnableHmeFlag },
@@ -602,10 +616,10 @@ void eb_config_ctor(EbConfig *config_ptr)
 #if TWO_PASS_USE_2NDP_ME_IN_1STP
     config_ptr->snd_pass_enc_mode                     = MAX_ENC_PRESET + 1;
 #endif
-    config_ptr->intra_period                         = -2;
-    config_ptr->intra_refresh_type                   = 1;
-    config_ptr->hierarchical_levels                  = 4;
-    config_ptr->pred_structure                       = 2;
+    config_ptr->intra_period                          = -2;
+    config_ptr->intra_refresh_type                     = 1;
+    config_ptr->hierarchical_levels                   = 4;
+    config_ptr->pred_structure                        = 2;
     config_ptr->disable_dlf_flag                     = EB_FALSE;
     config_ptr->enable_warped_motion                 = -1;
     config_ptr->enable_global_motion                 = EB_TRUE;
@@ -632,9 +646,10 @@ void eb_config_ctor(EbConfig *config_ptr)
     config_ptr->nsq_table                            = -1;
     config_ptr->frame_end_cdf_update                 = -1;
     config_ptr->enable_obmc                          = -1;
+    config_ptr->chroma_level                         = -1;
     config_ptr->pred_me                              = -1;
     config_ptr->bipred_3x3_inject                    = -1;
-    config_ptr->coumpound_level                      = -1;
+    config_ptr->compound_level                       = -1;
     config_ptr->enable_filter_intra                  = EB_TRUE;
     config_ptr->ext_block_flag                       = EB_FALSE;
     config_ptr->in_loop_me_flag                      = EB_TRUE;
@@ -1063,33 +1078,158 @@ static EbErrorType VerifySettings(EbConfig *config, uint32_t channelNumber)
         return_error = EB_ErrorBadParameter;
     }
 
-     // Resotration Filtering
-     if (config->enable_restoration_filtering != -1 && config->enable_restoration_filtering != 0 && config->enable_restoration_filtering != 1) {
-         fprintf(config->error_log_file, "Error instance %u: Invalid restoration flag [-1 - 1], your input: %d\n", channelNumber + 1, config->target_socket);
+     // Restoration Filtering
+     if (config->enable_restoration_filtering != 0 && config->enable_restoration_filtering != 1 && config->enable_restoration_filtering != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid restoration flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->enable_restoration_filtering);
          return_error = EB_ErrorBadParameter;
      }
 
-    //// Local Warped Motion
-    //if (config->enable_warped_motion != 0 && config->enable_warped_motion != 1) {
-    //    fprintf(config->error_log_file, "Error instance %u: Invalid warped motion flag [0 - 1], your input: %d\n", channelNumber + 1, config->target_socket);
-    //    return_error = EB_ErrorBadParameter;
-    //}
-
-     // Global Motion
-     if (config->enable_global_motion != 0 && config->enable_global_motion != 1) {
-       fprintf(config->error_log_file, "Error instance %u: Invalid global motion flag [0 - 1], your input: %d\n", channelNumber + 1, config->target_socket);
-       return_error = EB_ErrorBadParameter;
+     if (config->enable_atb != 0 && config->enable_atb != 1 && config->enable_atb != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid atb flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->enable_atb);
+         return_error = EB_ErrorBadParameter;
      }
 
+     if (config->enable_cdf != 0 && config->enable_cdf != 1 && config->enable_cdf != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid cdf flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->enable_cdf);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->combine_class_12 != 0 && config->combine_class_12 != 1 && config->combine_class_12 != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid combine MD Class1&2 flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->combine_class_12);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->edge_skp_angle_intra != 0 && config->edge_skp_angle_intra != 1 && config->edge_skp_angle_intra != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid Enable skip angle intra based on edge flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->edge_skp_angle_intra);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->inter_intra_compound != 0 && config->inter_intra_compound != 1 && config->inter_intra_compound != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid Inter Intra Compound flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->inter_intra_compound);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->fract_search_64 != 0 && config->fract_search_64 != 1 && config->fract_search_64 != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid fractional search for 64x64 flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->fract_search_64);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->inject_global_mv != 0 && config->inject_global_mv != 1 && config->inject_global_mv != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid global Motion Vector injection flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->inject_global_mv);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->enable_mfmv != 0 && config->enable_mfmv != 1 && config->enable_mfmv != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid motion field motion vector flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->enable_mfmv);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->quant_fp != 0 && config->quant_fp != 1 && config->quant_fp != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid perform quant fp flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->quant_fp);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->enable_redundant_blk != 0 && config->enable_redundant_blk != 1 && config->enable_redundant_blk != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid enable_redundant_blk  flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->enable_redundant_blk);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->enable_trellis != 0 && config->enable_trellis != 1 && config->enable_trellis != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid enable_trellis flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->enable_trellis);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->spatial_sse_fl != 0 && config->spatial_sse_fl != 1 && config->spatial_sse_fl != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid spatial_sse_fl flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->spatial_sse_fl);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->update_cdf != 0 && config->update_cdf != 1 && config->update_cdf != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid update_cdf flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->update_cdf);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->enable_subpel != 0 && config->enable_subpel != 1 && config->enable_subpel != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid enable_subpel flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->enable_subpel);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->over_bndry_blk != 0 && config->over_bndry_blk != 1 && config->over_bndry_blk != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid over_bndry_blk flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->over_bndry_blk);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->new_nearest_comb_inject != 0 && config->new_nearest_comb_inject != 1 && config->new_nearest_comb_inject != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid new_nearest_comb_inject flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->new_nearest_comb_inject);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->nx4_4xn_parent_mv_inject != 0 && config->nx4_4xn_parent_mv_inject != 1 && config->nx4_4xn_parent_mv_inject != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid nx4_4xn_parent_mv_inject flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->nx4_4xn_parent_mv_inject);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->prune_unipred_me != 0 && config->prune_unipred_me != 1 && config->prune_unipred_me != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid prune_unipred_me flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->prune_unipred_me);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->prune_ref_rec_part != 0 && config->prune_ref_rec_part != 1 && config->prune_ref_rec_part != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid prune_ref_rec_part flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->prune_ref_rec_part);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->nsq_table != 0 && config->nsq_table != 1 && config->nsq_table != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid nsq_table flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->nsq_table);
+         return_error = EB_ErrorBadParameter;
+     }
+
+     if (config->frame_end_cdf_update != 0 && config->frame_end_cdf_update != 1 && config->frame_end_cdf_update != -1) {
+         fprintf(config->error_log_file, "Error instance %u: Invalid frame_end_cdf_update flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->frame_end_cdf_update);
+         return_error = EB_ErrorBadParameter;
+     }
+
+    // Local Warped Motion
+    if (config->enable_warped_motion != 0 && config->enable_warped_motion != 1 && config->enable_warped_motion != -1) {
+        fprintf(config->error_log_file, "Error instance %u: Invalid warped motion flag [0/1, -1 for auto], your input: %d\n", channelNumber + 1, config->enable_warped_motion);
+        return_error = EB_ErrorBadParameter;
+    }
+
+    // Global Motion
+    if (config->enable_global_motion != 0 && config->enable_global_motion != 1) {
+      fprintf(config->error_log_file, "Error instance %u: Invalid global motion flag [0 - 1], your input: %d\n", channelNumber + 1, config->target_socket);
+      return_error = EB_ErrorBadParameter;
+    }
+
     // OBMC
-    //if (config->enable_obmc != -1 && config->enable_obmc != 0 && config->enable_obmc != 1) {
-    //    fprintf(config->error_log_file, "Error instance %u: Invalid OBMC flag [0 - 1], your input: %d\n", channelNumber + 1, config->target_socket);
-    //    return_error = EB_ErrorBadParameter;
-    //}
+    if (config->enable_obmc != 0 && config->enable_obmc != 1 && config->enable_obmc != -1) {
+        fprintf(config->error_log_file, "Error instance %u: Invalid OBMC flag [0/1, -1 for auto], your input: %d\n", channelNumber + 1, config->enable_obmc);
+        return_error = EB_ErrorBadParameter;
+    }
+
+    if (config->chroma_level > 3 || config->chroma_level < -1) {
+      fprintf(config->error_log_file, "Error instance %u: Invalid Chroma Mode [0-3, -1 for auto], your input: %d\n", channelNumber + 1, config->chroma_level);
+      return_error = EB_ErrorBadParameter;
+    }
+
+    if (config->pred_me > 5 || config->pred_me < -1) {
+        fprintf(config->error_log_file, "Error instance %u: Invalid predictive me level [0-5, -1 for auto], your input: %d\n", channelNumber + 1, config->pred_me);
+        return_error = EB_ErrorBadParameter;
+    }
+
+    if (config->bipred_3x3_inject > 2 || config->bipred_3x3_inject < -1) {
+        fprintf(config->error_log_file, "Error instance %u: Invalid bipred_3x3_inject mode [0-2, -1 for auto], your input: %d\n", channelNumber + 1, config->bipred_3x3_inject);
+        return_error = EB_ErrorBadParameter;
+    }
+
+    if (config->compound_level > 2 || config->compound_level < -1) {
+        fprintf(config->error_log_file, "Error instance %u: Invalid compound level [0-2, -1 for auto], your input: %d\n", channelNumber + 1, config->compound_level);
+        return_error = EB_ErrorBadParameter;
+    }
 
     // Filter Intra prediction
     if (config->enable_filter_intra != 0 && config->enable_filter_intra != 1) {
-        fprintf(config->error_log_file, "Error instance %u: Invalid Filter Intra flag [0 - 1], your input: %d\n", channelNumber + 1, config->target_socket);
+        fprintf(config->error_log_file, "Error instance %u: Invalid Filter Intra flag [0 - 1], your input: %d\n", channelNumber + 1, config->enable_filter_intra);
         return_error = EB_ErrorBadParameter;
     }
 
@@ -1099,10 +1239,8 @@ static EbErrorType VerifySettings(EbConfig *config, uint32_t channelNumber)
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->chroma_level > 3 || config->chroma_level < -1) {
-      fprintf(config->error_log_file, "Error instance %u: Invalid Chroma Mode [0 - 3], your input: %d\n", channelNumber + 1, config->target_socket);
-      return_error = EB_ErrorBadParameter;
-    }
+
+
     return return_error;
 }
 

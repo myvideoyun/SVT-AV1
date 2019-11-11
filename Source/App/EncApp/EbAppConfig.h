@@ -252,38 +252,46 @@ typedef struct EbConfig
     EbBool                  enable_global_motion;
 
     /****************************************
-     * OBMC
+     * Restoration Filtering
     ****************************************/
-    int8_t                 enable_restoration_filtering;
+    int8_t                  enable_restoration_filtering;
+    /****************************************/
+
     /****************************************
      * atb mode
     ****************************************/
-    int8_t                 enable_atb;
+    int8_t                  enable_atb;
+
     /****************************************
      * cdf mode
     ****************************************/
-    int8_t                 enable_cdf;
+    int8_t                  enable_cdf;
+
     /****************************************
      * class12
     ****************************************/
-    int8_t                 combine_class_12;
+    int8_t                  combine_class_12;
+
     /****************************************
      * edge based skip angle intra
     ****************************************/
-    int8_t                 edge_skp_angle_intra;
+    int8_t                  edge_skp_angle_intra;
+
     /****************************************
      * intra inter compoound
     ****************************************/
-    int8_t                 inter_intra_compound;
+    int8_t                  inter_intra_compound;
 
     /****************************************
      * fractional search 64x64
     ****************************************/
     int8_t                  fract_search_64;
+
     /****************************************
      * global mv injection
     ****************************************/
-    int8_t                 inject_global_mv;
+    int8_t                  inject_global_mv;
+
     /****************************************
      * motion field motion vector
     ****************************************/
@@ -340,6 +348,7 @@ typedef struct EbConfig
       * frame end cdf update
      ****************************************/
      int8_t                frame_end_cdf_update;
+
      /****************************************
       * predictive me
      ****************************************/
@@ -351,12 +360,27 @@ typedef struct EbConfig
      /****************************************
       * compound level
      ****************************************/
-     int8_t                 coumpound_level;
+     int8_t                 compound_level;
 
     /****************************************
      * OBMC
      ****************************************/
-     int32_t                  enable_obmc;
+
+     int8_t                  enable_obmc;
+
+    /****************************************
+     * Chroma
+     *
+     * Level                Settings
+     * CHROMA_MODE_0  0     Full chroma search @ MD
+     * CHROMA_MODE_1  1     Fast chroma search @ MD
+     * CHROMA_MODE_2  2     Chroma blind @ MD + CFL @ EP
+     * CHROMA_MODE_3  3     Chroma blind @ MD + no CFL @ EP
+     *
+     * Default is -1 (AUTO)  */
+
+     int8_t                   chroma_level;
+
     /****************************************
      * Filter intra prediction
      ****************************************/
@@ -426,20 +450,6 @@ typedef struct EbConfig
     uint32_t                 screen_content_mode;
     uint32_t                 high_dynamic_range_input;
     EbBool                   unrestricted_motion_vector;
-
-    /****************************************
-     * Chroma
-     *
-     * Level                Settings
-     * CHROMA_MODE_0  0     Full chroma search @ MD
-     * CHROMA_MODE_1  1     Fast chroma search @ MD
-     * CHROMA_MODE_2  2     Chroma blind @ MD + CFL @ EP
-     * CHROMA_MODE_3  3     Chroma blind @ MD + no CFL @ EP
-     *
-     * Default is -1 (AUTO) */
-
-    /****************************************/
-    int32_t                   chroma_level;
 
     /****************************************
      * Annex A Parameters
