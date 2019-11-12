@@ -860,6 +860,26 @@ EbErrorType signal_derivation_multi_processes_oq(
         picture_control_set_ptr->mdc_depth_level = (sequence_control_set_ptr->input_resolution == INPUT_SIZE_576p_RANGE_OR_LOWER) ? MAX_MDC_LEVEL : 6;
     else
         picture_control_set_ptr->mdc_depth_level = MAX_MDC_LEVEL; // Not tuned yet.
+
+#if MDC_ADAPTIVE_LEVEL
+// Adaptive Ol  Level                    Settings
+// 0                                     OFF
+// 1                                     ON
+
+    if (MR_MODE || sc_content_detected)
+        picture_control_set_ptr->adpative_ol_partitioning_level = 0;
+#if MDC_OFF_M2_NSQ_L
+    else if (picture_control_set_ptr->enc_mode <= ENC_M1)
+#else
+    else if (picture_control_set_ptr->enc_mode <= ENC_M3)
+#endif
+        picture_control_set_ptr->adpative_ol_partitioning_level = 1;
+    else
+        picture_control_set_ptr->adpative_ol_partitioning_level = 0;
+
+    if (picture_control_set_ptr->adpative_ol_partitioning_level)
+        picture_control_set_ptr->mdc_depth_level = 6;
+#endif
 #endif
 
     // NSQ search Level                               Settings

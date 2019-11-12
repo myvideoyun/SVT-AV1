@@ -185,6 +185,10 @@ enum {
 #define ADD_MDC_FULL_COST                               1
 #define NSQ_TAB_SIZE                                    8
 #define MAX_MDC_LEVEL                                   8
+#define MDC_ADAPTIVE_LEVEL                              1
+#define CLEANUP_MDC1                                    1
+#define MDC_OFF_M2_NSQ_L                                1 // MDC up to M1 only
+#define MDC_FIX                                         1
 #else
 #define NSQ_TAB_SIZE                                    6
 #endif

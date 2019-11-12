@@ -14305,6 +14305,9 @@ extern "C" {
 #if PREDICT_NSQ_SHAPE
         uint8_t                                mdc_depth_level;
 #endif
+#if MDC_ADAPTIVE_LEVEL
+        uint8_t                                adpative_ol_partitioning_level;
+#endif
     } PictureParentControlSet;
 
     typedef struct PictureControlSetInitData
