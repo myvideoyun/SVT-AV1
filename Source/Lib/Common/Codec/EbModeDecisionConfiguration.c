@@ -1175,7 +1175,7 @@ uint64_t mdc_av1_full_cost(
     return full_cost;
 }
 #endif
-EB_EXTERN EbErrorType nsq_prediction_shape(
+EB_EXTERN EbErrorType open_loop_partitioning_sb(
     SequenceControlSet                *sequence_control_set_ptr,
     PictureControlSet                 *picture_control_set_ptr,
     ModeDecisionConfigurationContext  *context_ptr,

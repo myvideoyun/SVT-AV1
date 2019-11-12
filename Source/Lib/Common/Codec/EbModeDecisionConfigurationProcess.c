@@ -275,7 +275,7 @@ static const int16_t ac_qlookup_12_Q3[QINDEX_RANGE] = {
 };
 
 #if PREDICT_NSQ_SHAPE
-EbErrorType nsq_prediction_shape(
+EbErrorType open_loop_partitioning_sb(
     SequenceControlSet                *sequence_control_set_ptr,
     PictureControlSet                 *picture_control_set_ptr,
     ModeDecisionConfigurationContext  *context_ptr,
@@ -1283,11 +1283,11 @@ uint8_t update_mdc_level(
     else if (s_depth == 0 && e_depth == 1)
         adjusted_depth_level = 1; // Pred + 1
     else if (s_depth == -3 && e_depth == 2)
-        adjusted_depth_level = 12; // Pred -3 + 1
+        adjusted_depth_level = 12; // Pred -3 + 2
     else if (s_depth == -2 && e_depth == 2)
-        adjusted_depth_level = 11; // Pred -3 + 1
+        adjusted_depth_level = 11; // Pred -2 + 2
     else if (s_depth == -1 && e_depth == 2)
-        adjusted_depth_level = 5; // Pred -3 + 1
+        adjusted_depth_level = 5; // Pred -1 + 2
     else if (s_depth == 0 && e_depth == 2)
         adjusted_depth_level = 2; // Pred + 2
     else if (s_depth == -3 && e_depth == 3)
@@ -1375,7 +1375,11 @@ void init_considered_block(
     uint8_t  is_complete_sb = sb_params->is_complete_sb;
     uint32_t tot_d1_blocks, block_1d_idx;
     EbBool split_flag;
+#if MDC_ADAPTIVE_LEVEL
+    uint32_t depth_refinement_mode = Predm3p3;
+#else
     uint32_t depth_refinement_mode = AllD;
+
     switch (picture_control_set_ptr->parent_pcs_ptr->mdc_depth_level) {
     case 0:
         depth_refinement_mode = is_complete_sb ? Pred : AllD;
@@ -1408,6 +1412,7 @@ void init_considered_block(
         printf("not supported mdc_depth_level");
         break;
     }
+#endif
     while (blk_index < sequence_control_set_ptr->max_block_cnt) {
         const BlockGeom * blk_geom = get_blk_geom_mds(blk_index);
         tot_d1_blocks =
@@ -1425,7 +1430,7 @@ void init_considered_block(
 #if MDC_ADAPTIVE_LEVEL
                 // Update MDC refinement
                 uint8_t adjusted_refinement_mode = depth_refinement_mode;
-                if (picture_control_set_ptr->parent_pcs_ptr->adpative_ol_partitioning_level)
+                if (picture_control_set_ptr->parent_pcs_ptr->enable_adaptive_ol_partitioning)
                     if (is_complete_sb && (context_ptr->local_cu_array[blk_index].early_split_flag == EB_FALSE))
                         adjusted_refinement_mode = update_mdc_level(
                             picture_control_set_ptr,
@@ -1435,7 +1440,7 @@ void init_considered_block(
                             blk_geom,
                             sequence_control_set_ptr->input_resolution,
                             picture_control_set_ptr->parent_pcs_ptr->is_used_as_reference_flag,
-                            picture_control_set_ptr->parent_pcs_ptr->mdc_depth_level);
+                            depth_refinement_mode);
 
                 switch (adjusted_refinement_mode) {
 #else
@@ -2215,14 +2220,19 @@ void open_loop_partitioning_pass(
         // SB Loop : Partitionnig Decision
         sb_ptr = picture_control_set_ptr->sb_ptr_array[sb_index];
         sb_ptr->qp = (uint8_t)picture_control_set_ptr->parent_pcs_ptr->picture_qp;
-        nsq_prediction_shape(
-            sequence_control_set_ptr,
-            picture_control_set_ptr,
-            context_ptr,
-            resultsPtr,
-            sb_ptr->origin_x,
-            sb_ptr->origin_y,
-            sb_index);
+#if MDC_FIX
+        uint32_t is_complete_sb = sequence_control_set_ptr->sb_geom[sb_index].is_complete_sb;
+        if (sequence_control_set_ptr->over_boundary_block_mode == 1 || is_complete_sb) {
+#endif
+            open_loop_partitioning_sb(
+                sequence_control_set_ptr,
+                picture_control_set_ptr,
+                context_ptr,
+                resultsPtr,
+                sb_ptr->origin_x,
+                sb_ptr->origin_y,
+                sb_index);
+        }
     }
     picture_control_set_ptr->parent_pcs_ptr->average_qp = (uint8_t)picture_control_set_ptr->parent_pcs_ptr->picture_qp;
 }
@@ -3332,27 +3342,34 @@ void* mode_decision_configuration_kernel(void *input_ptr)
         }
 #if ADD_MDC_REFINEMENT_LOOP
         if (picture_control_set_ptr->parent_pcs_ptr->slice_type != I_SLICE) {
+#if MDC_ADAPTIVE_LEVEL
+            if (picture_control_set_ptr->parent_pcs_ptr->enable_adaptive_ol_partitioning) {
+#else
             if (picture_control_set_ptr->parent_pcs_ptr->mdc_depth_level < MAX_MDC_LEVEL) {
+#endif
                 // SB Constants
                 uint8_t sb_sz = (uint8_t)sequence_control_set_ptr->sb_size_pix;
                 uint8_t lcu_size_log_2 = (uint8_t)Log2f(sb_sz);
                 uint32_t picture_height_in_sb = (sequence_control_set_ptr->seq_header.max_frame_height + sb_sz - 1) >> lcu_size_log_2;
                 uint32_t picture_width_in_sb = (sequence_control_set_ptr->seq_header.max_frame_width + sb_sz - 1) >> lcu_size_log_2;
+
                 for (uint32_t y_lcu_index = 0; y_lcu_index < picture_height_in_sb; ++y_lcu_index) {
                     for (uint32_t x_lcu_index = 0; x_lcu_index < picture_width_in_sb; ++x_lcu_index) {
                         uint32_t sb_index = (uint16_t)(y_lcu_index * picture_width_in_sb + x_lcu_index);
                         LargestCodingUnit  *sb_ptr = picture_control_set_ptr->sb_ptr_array[sb_index];
+#if MDC_FIX
+                        uint32_t is_complete_sb = sequence_control_set_ptr->sb_geom[sb_index].is_complete_sb;
+#endif
                         sb_ptr->origin_x = x_lcu_index << lcu_size_log_2;
                         sb_ptr->origin_y = y_lcu_index << lcu_size_log_2;
+                        open_loop_partitioning_pass(
+                            sequence_control_set_ptr,
+                            picture_control_set_ptr,
+                            context_ptr,
+                            sb_index);
 #if MDC_FIX
-                        uint32_t is_complete_sb = sequence_control_set_ptr->sb_geom[sb_index].is_complete_sb;  //Nader MDC fix
-                        if (sequence_control_set_ptr->over_boundary_block_mode == 1 || is_complete_sb) {       //Nader MDC fix
+                        if (sequence_control_set_ptr->over_boundary_block_mode == 1 || is_complete_sb) {
 #endif
-                            open_loop_partitioning_pass(
-                                sequence_control_set_ptr,
-                                picture_control_set_ptr,
-                                context_ptr,
-                                sb_index);
                             init_considered_block(
                                 sequence_control_set_ptr,
                                 picture_control_set_ptr,

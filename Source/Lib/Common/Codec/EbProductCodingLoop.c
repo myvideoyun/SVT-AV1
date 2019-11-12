@@ -6465,7 +6465,11 @@ EbBool allowed_ns_cu(
 
 #if COMBINE_MDC_NSQ_TABLE
     if (is_nsq_table_used) {
+#if MDC_ADAPTIVE_LEVEL
+        if (!mdc_depth_level) {
+#else
         if (mdc_depth_level == MAX_MDC_LEVEL) {
+#endif
             if (context_ptr->blk_geom->shape != PART_N) {
                 ret = 0;
                 for (int i = 0; i < nsq_max_shapes_md; i++) {
@@ -7040,8 +7044,11 @@ void  adjust_nsq_rank(
         else
             context_ptr->nsq_table[5] = neighbor_part != PART_N && neighbor_part != PART_S ? neighbor_part : me_part_0;
     }
-
+#if MDC_ADAPTIVE_LEVEL
+    if (picture_control_set_ptr->parent_pcs_ptr->enable_adaptive_ol_partitioning) {
+#else
     if (picture_control_set_ptr->parent_pcs_ptr->mdc_depth_level < MAX_MDC_LEVEL) {
+#endif
         context_ptr->nsq_table[2] = context_ptr->nsq_table[0] != ol_part1 && context_ptr->nsq_table[1] != ol_part1 ? ol_part1
             : context_ptr->nsq_table[0] != ol_part2 && context_ptr->nsq_table[1] != ol_part2 ? ol_part2
             : ol_part3 != PART_N ? ol_part3 : context_ptr->nsq_table[2];
@@ -7602,7 +7609,11 @@ void md_encode_block(
 #if ADJUST_NSQ_RANK_BASED_ON_NEIGH
     if (is_nsq_table_used) {
         if (context_ptr->blk_geom->shape == PART_N) {
+#if MDC_ADAPTIVE_LEVEL
+            if (picture_control_set_ptr->parent_pcs_ptr->enable_adaptive_ol_partitioning) {
+#else
             if (picture_control_set_ptr->parent_pcs_ptr->mdc_depth_level < MAX_MDC_LEVEL) {
+#endif
                 adjust_nsq_rank(
                     picture_control_set_ptr,
                     context_ptr,
@@ -7644,7 +7655,11 @@ void md_encode_block(
 
     if (allowed_ns_cu(
 #if COMBINE_MDC_NSQ_TABLE
+#if MDC_ADAPTIVE_LEVEL
+        picture_control_set_ptr->parent_pcs_ptr->enable_adaptive_ol_partitioning,
+#else
         picture_control_set_ptr->parent_pcs_ptr->mdc_depth_level,
+#endif
 #endif
         is_nsq_table_used, picture_control_set_ptr->parent_pcs_ptr->nsq_max_shapes_md, context_ptr, is_complete_sb))
     {
