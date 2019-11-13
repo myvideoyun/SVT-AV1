@@ -847,6 +847,9 @@ EbErrorType signal_derivation_multi_processes_oq(
         // Adaptive Ol  Level                    Settings
         // 0                                     OFF
         // 1                                     ON 
+        //NM : Please note that the open_loop_partitioning is operational only when 
+        // pic_depth_mode is set to PIC_ALL_DEPTH_MODE or PIC_ALL_C_DEPTH_MODE when 
+        // the motion information information for NSQ is generated.
         if (picture_control_set_ptr->pic_depth_mode <= PIC_ALL_C_DEPTH_MODE) {
             if (MR_MODE || sc_content_detected || sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
                 picture_control_set_ptr->enable_adaptive_ol_partitioning = 0;
