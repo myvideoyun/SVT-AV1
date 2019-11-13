@@ -215,6 +215,7 @@ EbErrorType CopyConfigurationParameters(
     callback_data->eb_enc_parameters.frame_end_cdf_update = config->frame_end_cdf_update;
     callback_data->eb_enc_parameters.enable_obmc = config->enable_obmc;
     callback_data->eb_enc_parameters.chroma_level = config->chroma_level;
+    callback_data->eb_enc_parameters.enable_rdoq = config->enable_rdoq;
     callback_data->eb_enc_parameters.pred_me = config->pred_me;
     callback_data->eb_enc_parameters.bipred_3x3_inject = config->bipred_3x3_inject;
     callback_data->eb_enc_parameters.compound_level = config->compound_level;

@@ -382,6 +382,12 @@ typedef struct EbConfig
      int8_t                   chroma_level;
 
     /****************************************
+     * RDOQ
+     ****************************************/
+
+     int8_t                  enable_rdoq;
+
+    /****************************************
      * Filter intra prediction
      ****************************************/
     EbBool                  enable_filter_intra;

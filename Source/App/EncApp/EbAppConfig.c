@@ -92,6 +92,7 @@
 #define GLOBAL_MOTION_ENABLE_TOKEN      "-global-motion"
 #define OBMC_TOKEN                      "-obmc"
 #define CHROMA_LEVEL_TOKEN              "-chroma"
+#define RDOQ_TOKEN                      "-rdoq"
 #define PRED_ME_TOKEN                   "-pred-me"
 #define BIPRED_3x3_TOKEN                "-bipred-3x3"
 #define COMPOUND_LEVEL_TOKEN            "-compound"
@@ -294,6 +295,7 @@ static void SetNsqTableFlag                     (const char *value, EbConfig *cf
 static void SetFrameEndCdfUpdateFlag            (const char *value, EbConfig *cfg) { cfg->frame_end_cdf_update = (int8_t)strtol(value, NULL, 0);};
 static void SetEnableObmcFlag                   (const char *value, EbConfig *cfg) {cfg->enable_obmc = (int8_t)strtol(value, NULL, 0);};
 static void SetChromaLevel                      (const char *value, EbConfig *cfg) { cfg->chroma_level  = (int8_t)strtol(value, NULL, 0);};
+static void SetEnableRdoqFlag                   (const char *value, EbConfig *cfg) {cfg->enable_rdoq = (int8_t)strtol(value, NULL, 0);};
 static void SetPredictiveMeFlag                 (const char *value, EbConfig *cfg) { cfg->pred_me = (int8_t)strtol(value, NULL, 0); };
 static void SetBipred3x3injectFlag              (const char *value, EbConfig *cfg) { cfg->bipred_3x3_inject = (int8_t)strtol(value, NULL, 0); };
 static void SetCompoundLevelFlag                (const char *value, EbConfig *cfg) { cfg->compound_level = (int8_t)strtol(value, NULL, 0); };
@@ -494,6 +496,9 @@ config_entry_t config_entry[] = {
     { SINGLE_INPUT, OBMC_TOKEN, "Obmc", SetEnableObmcFlag },
     // CHROMA
     { SINGLE_INPUT, CHROMA_LEVEL_TOKEN, "ChromaLevel", SetChromaLevel },
+    // RDOQ
+    { SINGLE_INPUT, RDOQ_TOKEN, "Rdoq", SetEnableRdoqFlag },
+
     // PREDICTIVE ME
     { SINGLE_INPUT, PRED_ME_TOKEN, "PredMe", SetPredictiveMeFlag },
     // BIPRED 3x3 INJECTION
@@ -647,6 +652,7 @@ void eb_config_ctor(EbConfig *config_ptr)
     config_ptr->frame_end_cdf_update                 = -1;
     config_ptr->enable_obmc                          = -1;
     config_ptr->chroma_level                         = -1;
+    config_ptr->enable_rdoq                          = -1;
     config_ptr->pred_me                              = -1;
     config_ptr->bipred_3x3_inject                    = -1;
     config_ptr->compound_level                       = -1;
@@ -1212,6 +1218,12 @@ static EbErrorType VerifySettings(EbConfig *config, uint32_t channelNumber)
       return_error = EB_ErrorBadParameter;
     }
 
+    // RDOQ
+    if (config->enable_rdoq != 0 && config->enable_rdoq != 1 && config->enable_rdoq != -1) {
+        fprintf(config->error_log_file, "Error instance %u: Invalid RDOQ flag [0/1, -1 for auto], your input: %d\n", channelNumber + 1, config->enable_rdoq);
+        return_error = EB_ErrorBadParameter;
+    }
+    
     if (config->pred_me > 5 || config->pred_me < -1) {
         fprintf(config->error_log_file, "Error instance %u: Invalid predictive me level [0-5, -1 for auto], your input: %d\n", channelNumber + 1, config->pred_me);
         return_error = EB_ErrorBadParameter;

@@ -2165,6 +2165,9 @@ void CopyApiFromApp(
     // Chroma mode
     sequence_control_set_ptr->static_config.chroma_level = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->chroma_level;
 
+    // RDOQ
+    sequence_control_set_ptr->static_config.enable_rdoq = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->enable_rdoq;
+
     // Predictive ME
     sequence_control_set_ptr->static_config.pred_me = ((EbSvtAv1EncConfiguration*)pComponentParameterStructure)->pred_me;
     // BiPred 3x3 injection
@@ -2724,6 +2727,7 @@ EbErrorType eb_svt_enc_init_parameter(
     config_ptr->frame_end_cdf_update = AUTO_MODE;
     config_ptr->enable_obmc = AUTO_MODE;
     config_ptr->chroma_level = AUTO_MODE;
+    config_ptr->enable_rdoq = AUTO_MODE;
     config_ptr->pred_me = AUTO_MODE;
     config_ptr->bipred_3x3_inject = AUTO_MODE;
     config_ptr->compound_level = AUTO_MODE;

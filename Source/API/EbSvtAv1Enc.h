@@ -358,6 +358,11 @@ typedef struct EbSvtAv1EncConfiguration
      * Default is -1 (AUTO) */
     int8_t                   chroma_level;
 
+    /* RDOQ
+    *
+    * Default is -1. */
+    int8_t                   enable_rdoq;
+
     /* Filter intra prediction
     *
     * Default is 1. */

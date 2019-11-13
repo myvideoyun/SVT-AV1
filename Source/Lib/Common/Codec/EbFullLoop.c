@@ -1393,7 +1393,11 @@ int32_t av1_quantize_inv_quantize(
     EbBool perform_rdoq = ((md_context->md_staging_skip_rdoq == EB_FALSE || is_encode_pass) && md_context->trellis_quant_coeff_optimization && component_type == COMPONENT_LUMA && !is_intra_bc);
 #endif
 
-    perform_rdoq = perform_rdoq && !picture_control_set_ptr->hbd_mode_decision && !bit_increment;
+    SequenceControlSet *sequence_control_set_ptr = (SequenceControlSet*)picture_control_set_ptr->sequence_control_set_wrapper_ptr->object_ptr;
+    if (sequence_control_set_ptr->static_config.enable_rdoq == AUTO_MODE)
+        perform_rdoq = perform_rdoq && !picture_control_set_ptr->hbd_mode_decision && !bit_increment;
+    else
+	perform_rdoq = sequence_control_set_ptr->static_config.enable_rdoq;
 
     // Hsan: set to FALSE until adding x86 quantize_fp
     EbBool perform_quantize_fp = picture_control_set_ptr->enc_mode == ENC_M0 ? EB_TRUE: EB_FALSE;
