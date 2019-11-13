@@ -853,7 +853,7 @@ EbErrorType signal_derivation_multi_processes_oq(
         if (picture_control_set_ptr->pic_depth_mode <= PIC_ALL_C_DEPTH_MODE) {
             if (MR_MODE || sc_content_detected || sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
                 picture_control_set_ptr->enable_adaptive_ol_partitioning = 0;
-            else if (picture_control_set_ptr->enc_mode <= ENC_M1)
+            else if (picture_control_set_ptr->enc_mode <= ENC_M0)
                 picture_control_set_ptr->enable_adaptive_ol_partitioning = 1;
             else
                 picture_control_set_ptr->enable_adaptive_ol_partitioning = 0;

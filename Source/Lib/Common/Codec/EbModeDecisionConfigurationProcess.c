@@ -2112,7 +2112,7 @@ void init_considered_block(
                             resultsPtr->leaf_data_array[blk_index + block_1d_idx].consider_block = 1;
                             resultsPtr->leaf_data_array[blk_index + block_1d_idx].refined_split_flag = EB_FALSE;
                         }
-#if 0
+#if 1
                         set_child_to_be_considered(
                             resultsPtr,
                             blk_index,
