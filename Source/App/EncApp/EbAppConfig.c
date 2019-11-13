@@ -68,6 +68,7 @@
 #define LOCAL_WARPED_ENABLE_TOKEN       "-local-warp"
 #define GLOBAL_MOTION_ENABLE_TOKEN      "-global-motion"
 #define OBMC_TOKEN                      "-obmc"
+#define RDOQ_TOKEN                      "-rdoq"
 #define FILTER_INTRA_TOKEN              "-filter-intra"
 #define USE_DEFAULT_ME_HME_TOKEN        "-use-default-me-hme"
 #define HME_ENABLE_TOKEN                "-hme"
@@ -244,6 +245,8 @@ static void SetDisableDlfFlag                   (const char *value, EbConfig *cf
 static void SetEnableLocalWarpedMotionFlag      (const char *value, EbConfig *cfg) {cfg->enable_warped_motion = (EbBool)strtoul(value, NULL, 0);};
 static void SetEnableGlobalMotionFlag           (const char *value, EbConfig *cfg) {cfg->enable_global_motion = (EbBool)strtoul(value, NULL, 0);};
 static void SetEnableObmcFlag                   (const char *value, EbConfig *cfg) {cfg->enable_obmc = (EbBool)strtoul(value, NULL, 0);};
+static void SetEnableRdoqFlag                   (const char *value, EbConfig *cfg) {cfg->enable_rdoq = (int8_t)strtol(value, NULL, 0);};
+
 static void SetEnableFilterIntraFlag            (const char *value, EbConfig *cfg) {cfg->enable_filter_intra = (EbBool)strtoul(value, NULL, 0);};
 static void SetEnableHmeFlag                    (const char *value, EbConfig *cfg) {cfg->enable_hme_flag = (EbBool)strtoul(value, NULL, 0);};
 static void SetEnableHmeLevel0Flag              (const char *value, EbConfig *cfg) {cfg->enable_hme_level0_flag = (EbBool)strtoul(value, NULL, 0);};
@@ -391,6 +394,8 @@ config_entry_t config_entry[] = {
     { SINGLE_INPUT, GLOBAL_MOTION_ENABLE_TOKEN, "GlobalMotion", SetEnableGlobalMotionFlag },
     // OBMC
     { SINGLE_INPUT, OBMC_TOKEN, "Obmc", SetEnableObmcFlag },
+    // RDOQ
+    { SINGLE_INPUT, RDOQ_TOKEN, "Rdoq", SetEnableRdoqFlag },
     // Filter Intra
     { SINGLE_INPUT, FILTER_INTRA_TOKEN, "FilterIntra", SetEnableFilterIntraFlag },
     // ME Tools
@@ -514,6 +519,7 @@ void eb_config_ctor(EbConfig *config_ptr)
     config_ptr->enable_warped_motion                 = EB_FALSE;
     config_ptr->enable_global_motion                 = EB_TRUE;
     config_ptr->enable_obmc                          = EB_TRUE;
+    config_ptr->enable_rdoq                          = -1;
     config_ptr->enable_filter_intra                  = EB_TRUE;
     config_ptr->ext_block_flag                       = EB_FALSE;
     config_ptr->in_loop_me_flag                      = EB_TRUE;
@@ -957,6 +963,12 @@ static EbErrorType VerifySettings(EbConfig *config, uint32_t channelNumber)
     // OBMC
     if (config->enable_obmc != 0 && config->enable_obmc != 1) {
         fprintf(config->error_log_file, "Error instance %u: Invalid OBMC flag [0 - 1], your input: %d\n", channelNumber + 1, config->target_socket);
+        return_error = EB_ErrorBadParameter;
+    }
+
+    // RDOQ
+    if (config->enable_rdoq != 0 && config->enable_rdoq != 1 && config->enable_rdoq != -1) {
+        fprintf(config->error_log_file, "Error instance %u: Invalid RDOQ flag [0/1, -1 for auto], your input: %d\n", channelNumber + 1, config->enable_rdoq);
         return_error = EB_ErrorBadParameter;
     }
     // Filter Intra prediction
