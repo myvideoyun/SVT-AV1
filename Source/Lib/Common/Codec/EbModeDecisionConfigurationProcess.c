@@ -1376,7 +1376,7 @@ void init_considered_block(
     uint32_t tot_d1_blocks, block_1d_idx;
     EbBool split_flag;
 #if MDC_ADAPTIVE_LEVEL
-    uint32_t depth_refinement_mode = Predm3p3;
+    uint32_t depth_refinement_mode = Predm1p3;
 #else
     uint32_t depth_refinement_mode = AllD;
 
@@ -2234,7 +2234,9 @@ void open_loop_partitioning_pass(
                 sb_ptr->origin_x,
                 sb_ptr->origin_y,
                 sb_index);
+#if MDC_FIX
         }
+#endif
     }
     picture_control_set_ptr->parent_pcs_ptr->average_qp = (uint8_t)picture_control_set_ptr->parent_pcs_ptr->picture_qp;
 }
@@ -3364,14 +3366,15 @@ void* mode_decision_configuration_kernel(void *input_ptr)
 #endif
                         sb_ptr->origin_x = x_lcu_index << lcu_size_log_2;
                         sb_ptr->origin_y = y_lcu_index << lcu_size_log_2;
+#if MDC_FIX
+                        if (sequence_control_set_ptr->over_boundary_block_mode == 1 || is_complete_sb) {
+#endif
                         open_loop_partitioning_pass(
                             sequence_control_set_ptr,
                             picture_control_set_ptr,
                             context_ptr,
                             sb_index);
-#if MDC_FIX
-                        if (sequence_control_set_ptr->over_boundary_block_mode == 1 || is_complete_sb) {
-#endif
+
                             init_considered_block(
                                 sequence_control_set_ptr,
                                 picture_control_set_ptr,
