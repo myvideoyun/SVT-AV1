@@ -1240,6 +1240,20 @@ uint64_t  mdc_tab[9][2][3] = {
     {{100,20,0},{150,50,0}}
 };
 
+#if SKIP_DEPTH_ABILITY
+uint64_t  skip_mdc_tab[9][2][2] = {
+    {{100,40},{100,40}},
+    {{150,80},{150,80}},
+    {{100,20},{150,50}},
+    {{100,20},{150,50}},
+    {{100,20},{150,50}},
+    {{100,20},{150,50}},
+    {{100,20},{150,50}},
+    {{100,20},{150,50}},
+    {{100,20},{150,50}}
+};
+#endif
+
 // Update MDC refinement
 uint8_t update_mdc_level(
     PictureControlSet  *picture_control_set_ptr,
@@ -1279,6 +1293,13 @@ uint8_t update_mdc_level(
     uint64_t pth01 = mdc_tab[encode_mode][1][0];
     uint64_t pth02 = mdc_tab[encode_mode][1][1];
     uint64_t pth03 = mdc_tab[encode_mode][1][2];
+
+#if SKIP_DEPTH_ABILITY
+    uint64_t skip_mth01 = skip_mdc_tab[encode_mode][0][0];
+    uint64_t skip_mth02 = skip_mdc_tab[encode_mode][0][1];
+    uint64_t skip_pth01 = skip_mdc_tab[encode_mode][1][0];
+    uint64_t skip_pth02 = skip_mdc_tab[encode_mode][1][1];
+#endif
     uint64_t dist_001 = sb_ptr->depth_cost[depth] != 0 ? (ABS((int64_t)sb_ptr->depth_cost[depth] - (int64_t)sb_ptr->depth_cost[depthp1]) * 100) / sb_ptr->depth_cost[depth] : max_distance;
     uint64_t dist_100 = sb_ptr->depth_cost[depth] != 0 ? (ABS((int64_t)sb_ptr->depth_cost[depth] - (int64_t)sb_ptr->depth_cost[depthm1]) * 100) / sb_ptr->depth_cost[depth] : max_distance;
     uint64_t dist_002 = sb_ptr->depth_cost[depth] != 0 ? (ABS((int64_t)sb_ptr->depth_cost[depth] - (int64_t)sb_ptr->depth_cost[depthp2]) * 100) / sb_ptr->depth_cost[depth] : max_distance;
@@ -1308,11 +1329,11 @@ uint8_t update_mdc_level(
 
 #if SKIP_DEPTH_ABILITY
     // Skip intermediate depth condition
-    uint8_t skip_pm2_flag = dist_200 < mth02 ? 0 : 1;
-    uint8_t skip_pm1_flag = dist_100 < mth01 ? 0 : 1;
+    uint8_t skip_pm2_flag = dist_200 < skip_mth02 ? 0 : 1;
+    uint8_t skip_pm1_flag = dist_100 < skip_mth01 ? 0 : 1;
     uint8_t skip_p_flag   = 0;
-    uint8_t skip_pp1_flag = dist_001 < mth01 ? 0 : 1;
-    uint8_t skip_pp2_flag = dist_002 < mth02 ? 0 : 1;
+    uint8_t skip_pp1_flag = dist_001 < skip_pth01 ? 0 : 1;
+    uint8_t skip_pp2_flag = dist_002 < skip_pth02 ? 0 : 1;
     if (s_depth == 0 && e_depth == 0) {
         adjusted_depth_level = 0; // Pred only
         skip_depth[depth] = 0;
