@@ -1144,7 +1144,7 @@ EbErrorType mdc_inter_pu_prediction_av1(
         context_ptr->blk_geom->origin_x,
         context_ptr->blk_geom->origin_y,
         0, // No chroma
-        0); //bit_depth 0
+        8); //bit_depth 0
 
     return return_error;
 }
