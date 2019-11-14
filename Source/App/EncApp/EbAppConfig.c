@@ -395,7 +395,7 @@ config_entry_t config_entry[] = {
     // OBMC
     { SINGLE_INPUT, OBMC_TOKEN, "Obmc", SetEnableObmcFlag },
     // RDOQ
-    { SINGLE_INPUT, RDOQ_TOKEN, "Rdoq", SetEnableRdoqFlag },
+    { SINGLE_INPUT, RDOQ_TOKEN, "RDOQ", SetEnableRdoqFlag },
     // Filter Intra
     { SINGLE_INPUT, FILTER_INTRA_TOKEN, "FilterIntra", SetEnableFilterIntraFlag },
     // ME Tools
