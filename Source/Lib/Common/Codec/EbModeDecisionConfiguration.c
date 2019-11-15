@@ -763,7 +763,7 @@ int32_t mdc_av1_quantize_inv_quantize(
     MacroblockPlane candidate_plane;
     const QmVal *qMatrix = picture_control_set_ptr->parent_pcs_ptr->gqmatrix[NUM_QM_LEVELS - 1][0][txsize];
     const QmVal *iqMatrix = picture_control_set_ptr->parent_pcs_ptr->giqmatrix[NUM_QM_LEVELS - 1][0][txsize];
-#if ADD_DELTA_QP_SUPPORT
+#if ADD_DELTA_QP_SUPPORT && MDC_ADAPTIVE_LEVEL
     //NM - Assuming 1 segment.
     uint32_t qIndex = picture_control_set_ptr->parent_pcs_ptr->frm_hdr.delta_q_params.delta_q_present ? quantizer_to_qindex[qp] : picture_control_set_ptr->parent_pcs_ptr->frm_hdr.quantization_params.base_q_idx;
 #else
@@ -1144,7 +1144,11 @@ EbErrorType mdc_inter_pu_prediction_av1(
         context_ptr->blk_geom->origin_x,
         context_ptr->blk_geom->origin_y,
         0, // No chroma
+#if MDC_ADAPTIVE_LEVEL
         8); //bit_depth 0
+#else
+        0); //bit_depth 0
+#endif
 
     return return_error;
 }

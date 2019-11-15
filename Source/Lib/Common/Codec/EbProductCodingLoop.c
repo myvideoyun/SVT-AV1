@@ -3161,10 +3161,17 @@ void predictive_me_search(
                             ref_idx,
                             best_search_mvx,
                             best_search_mvy,
+#if MDC_ADAPTIVE_LEVEL
                             -(EIGHT_PEL_REF_WINDOW >> 1),
                             +(EIGHT_PEL_REF_WINDOW >> 1),
                             -(EIGHT_PEL_REF_WINDOW >> 1),
                             +(EIGHT_PEL_REF_WINDOW >> 1),
+#else
+                            -(QUARTER_PEL_REF_WINDOW >> 1),
+                            +(QUARTER_PEL_REF_WINDOW >> 1),
+                            -(QUARTER_PEL_REF_WINDOW >> 1),
+                            +(QUARTER_PEL_REF_WINDOW >> 1),
+#endif
                             1,
                             &best_search_mvx,
                             &best_search_mvy,
