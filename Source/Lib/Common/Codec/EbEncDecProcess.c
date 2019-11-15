@@ -1183,7 +1183,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
     // CHROMA_MODE_2  2     Chroma blind @ MD + CFL @ EP
     // CHROMA_MODE_3  3     Chroma blind @ MD + no CFL @ EP
 
-    if (sequence_control_set_ptr->static_config.chroma_level > 0) {
+    if (sequence_control_set_ptr->static_config.chroma_level == AUTO_MODE) {
         if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M6)
                 context_ptr->chroma_level = CHROMA_MODE_1;
@@ -1208,8 +1208,8 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
                 CHROMA_MODE_2 :
                 CHROMA_MODE_3 ;
     }
-    else
-        context_ptr->chroma_level = CHROMA_MODE_0;
+    else // use specified level
+      context_ptr->chroma_level = sequence_control_set_ptr->static_config.chroma_level;
 
     // Set fast loop method
     // 1 fast loop: SSD_SEARCH not supported
@@ -1290,7 +1290,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
         context_ptr->global_mv_injection = 0;
 #endif
 
-    if (sequence_control_set_ptr->static_config.new_nearest_comb_inject) {
+    if (sequence_control_set_ptr->static_config.new_nearest_comb_inject == AUTO_MODE) {
 #if FIX_NEAREST_NEW
         if (picture_control_set_ptr->enc_mode <= ENC_M0 && picture_control_set_ptr->parent_pcs_ptr->is_used_as_reference_flag)
 #else
@@ -1301,16 +1301,16 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
             context_ptr->new_nearest_near_comb_injection = 0;
     }
     else
-        context_ptr->new_nearest_near_comb_injection = 0;
+        context_ptr->new_nearest_near_comb_injection = sequence_control_set_ptr->static_config.new_nearest_comb_inject;
 
-    if (sequence_control_set_ptr->static_config.nx4_4xn_parent_mv_inject) {
+    if (sequence_control_set_ptr->static_config.nx4_4xn_parent_mv_inject == AUTO_MODE) {
         if (picture_control_set_ptr->enc_mode == ENC_M0)
             context_ptr->nx4_4xn_parent_mv_injection = 1;
         else
             context_ptr->nx4_4xn_parent_mv_injection = 0;
     }
     else
-        context_ptr->nx4_4xn_parent_mv_injection = 0;
+        context_ptr->nx4_4xn_parent_mv_injection = sequence_control_set_ptr->static_config.nx4_4xn_parent_mv_inject;
 
     // Set warped motion injection
     // Level                Settings
@@ -1344,7 +1344,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
     // 0                    OFF
     // 1                    ON FULL
     // 2                    Reduced set
-    if (sequence_control_set_ptr->static_config.bipred_3x3_inject) {
+    if (sequence_control_set_ptr->static_config.bipred_3x3_inject == AUTO_MODE) {
         if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M1)
                 context_ptr->bipred3x3_injection = 1;
@@ -1359,7 +1359,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
                 context_ptr->bipred3x3_injection = 0;
     }
     else
-        context_ptr->bipred3x3_injection = 0;
+        context_ptr->bipred3x3_injection = sequence_control_set_ptr->static_config.bipred_3x3_inject;
 
     // Level                Settings
     // 0                    Level 0: OFF
@@ -1368,7 +1368,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
     // 3                    Level 3: 7x5 full-pel search +  (H + V + D only ~ the best) sub-pel refinement = up to 6 half-pel + up to 6  quarter-pel = up to 12 positions + pred_me_distortion to pa_me_distortion deviation on
     // 4                    Level 4: 7x5 full-pel search +  (H + V + D) sub-pel refinement = 8 half-pel + 8 quarter-pel = 16 positions + pred_me_distortion to pa_me_distortion deviation on
     // 5                    Level 5: 7x5 full-pel search +  (H + V + D) sub-pel refinement = 8 half-pel + 8 quarter-pel = 16 positions + pred_me_distortion to pa_me_distortion deviation off
-    if (sequence_control_set_ptr->static_config.pred_me > 0) {
+    if (sequence_control_set_ptr->static_config.pred_me == AUTO_MODE) {
         if (picture_control_set_ptr->slice_type != I_SLICE)
             if (picture_control_set_ptr->enc_mode <= ENC_M1)
                 context_ptr->predictive_me_level = 4;
@@ -1380,7 +1380,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
             context_ptr->predictive_me_level = 0;
     }
     else
-        context_ptr->predictive_me_level = 0;
+        context_ptr->predictive_me_level = (picture_control_set_ptr->slice_type == I_SLICE)?0: sequence_control_set_ptr->static_config.pred_me;
 
     // Derive md_staging_mode
     //
@@ -1498,10 +1498,10 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
     // Combine MD Class1&2
     // 0                    OFF
     // 1                    ON
-    if (sequence_control_set_ptr->static_config.combine_class_12)
+    if (sequence_control_set_ptr->static_config.combine_class_12 == AUTO_MODE)
         context_ptr->combine_class12 = (picture_control_set_ptr->enc_mode == ENC_M0) ? 0 : 1;
     else
-        context_ptr->combine_class12 = 0;
+        context_ptr->combine_class12 = sequence_control_set_ptr->static_config.combine_class_12;
 
 
     // Set interpolation filter search blk size
@@ -1518,7 +1518,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
     context_ptr->pf_md_mode = PF_OFF;
 
     // Derive Spatial SSE Flag
-    if (sequence_control_set_ptr->static_config.spatial_sse_fl) {
+    if (sequence_control_set_ptr->static_config.spatial_sse_fl == AUTO_MODE) {
         if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M6)
                 context_ptr->spatial_sse_full_loop = EB_TRUE;
@@ -1531,7 +1531,7 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
             context_ptr->spatial_sse_full_loop = EB_FALSE;
     }
     else
-        context_ptr->spatial_sse_full_loop = EB_FALSE;
+        context_ptr->spatial_sse_full_loop = sequence_control_set_ptr->static_config.spatial_sse_fl;
 
     if (context_ptr->chroma_level <= CHROMA_MODE_1)
         context_ptr->blk_skip_decision = EB_TRUE;
@@ -1539,17 +1539,17 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
         context_ptr->blk_skip_decision = EB_FALSE;
 
     // Derive Trellis Quant Coeff Optimization Flag
-    if (sequence_control_set_ptr->static_config.enable_trellis) {
+    if (sequence_control_set_ptr->static_config.enable_trellis == AUTO_MODE) {
     if (picture_control_set_ptr->enc_mode == ENC_M0)
         context_ptr->trellis_quant_coeff_optimization = EB_TRUE;
     else
         context_ptr->trellis_quant_coeff_optimization = EB_FALSE;
     }
     else
-        context_ptr->trellis_quant_coeff_optimization = EB_FALSE;
+        context_ptr->trellis_quant_coeff_optimization = sequence_control_set_ptr->static_config.enable_trellis;
 
     // Derive redundant block
-    if (sequence_control_set_ptr->static_config.enable_redundant_blk) {
+    if (sequence_control_set_ptr->static_config.enable_redundant_blk == AUTO_MODE) {
         if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M1)
                 context_ptr->redundant_blk = EB_TRUE;
@@ -1562,9 +1562,9 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
             context_ptr->redundant_blk = EB_FALSE;
     }
     else
-        context_ptr->redundant_blk = EB_FALSE;
+        context_ptr->redundant_blk = sequence_control_set_ptr->static_config.enable_redundant_blk;
 
-    if (sequence_control_set_ptr->static_config.edge_skp_angle_intra) {
+    if (sequence_control_set_ptr->static_config.edge_skp_angle_intra == AUTO_MODE) {
         if (sequence_control_set_ptr->static_config.encoder_bit_depth == EB_8BIT)
 #if FIX_ESTIMATE_INTRA
             if (MR_MODE)
@@ -1582,16 +1582,16 @@ EbErrorType signal_derivation_enc_dec_kernel_oq(
             context_ptr->edge_based_skip_angle_intra = 0;
     }
     else
-	context_ptr->edge_based_skip_angle_intra = 0;
+	context_ptr->edge_based_skip_angle_intra = sequence_control_set_ptr->static_config.edge_skp_angle_intra;
 
-    if (sequence_control_set_ptr->static_config.prune_ref_rec_part) {
+    if (sequence_control_set_ptr->static_config.prune_ref_rec_part == AUTO_MODE) {
         if (picture_control_set_ptr->parent_pcs_ptr->sc_content_detected || picture_control_set_ptr->enc_mode == ENC_M0)
             context_ptr->prune_ref_frame_for_rec_partitions = 0;
         else
             context_ptr->prune_ref_frame_for_rec_partitions = 1;
     }
     else
-        context_ptr->prune_ref_frame_for_rec_partitions = 0;
+        context_ptr->prune_ref_frame_for_rec_partitions = sequence_control_set_ptr->static_config.prune_ref_rec_part;
 
 #if SPEED_OPT
     // Derive INTER/INTER WEDGE variance TH

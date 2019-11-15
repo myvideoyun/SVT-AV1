@@ -113,16 +113,17 @@ EbErrorType signal_derivation_pre_analysis_oq(
     picture_control_set_ptr->tf_enable_hme_level1_flag = tf_enable_hme_level1_flag[0][input_resolution][hme_me_level] || tf_enable_hme_level1_flag[1][input_resolution][hme_me_level];
     picture_control_set_ptr->tf_enable_hme_level2_flag = tf_enable_hme_level2_flag[0][input_resolution][hme_me_level] || tf_enable_hme_level2_flag[1][input_resolution][hme_me_level];
 
-    // TODO: check if enable_restoration can be 1 for enc_mode >= 8, it if not possible in the code below
-    if (picture_control_set_ptr->enc_mode >= ENC_M8)
-        sequence_control_set_ptr->seq_header.enable_restoration = 0;
+    if (sequence_control_set_ptr->static_config.enable_restoration_filtering == AUTO_MODE) {
+        if (picture_control_set_ptr->enc_mode >= ENC_M8)
+            sequence_control_set_ptr->seq_header.enable_restoration = 0;
+    }
     else
         sequence_control_set_ptr->seq_header.enable_restoration = sequence_control_set_ptr->static_config.enable_restoration_filtering;
 
-    if (sequence_control_set_ptr->static_config.enable_cdf)
+    if (sequence_control_set_ptr->static_config.enable_cdf == AUTO_MODE)
         sequence_control_set_ptr->cdf_mode = (picture_control_set_ptr->enc_mode <= ENC_M6) ? 0 : 1;
     else
-        sequence_control_set_ptr->cdf_mode = 0;
+        sequence_control_set_ptr->cdf_mode = sequence_control_set_ptr->static_config.enable_cdf;
 
     return return_error;
 }
@@ -701,22 +702,22 @@ void* resource_coordination_kernel(void *input_ptr)
                     ((sequence_control_set_ptr->static_config.encoder_bit_depth >= 8 && sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ||
                     sequence_control_set_ptr->static_config.encoder_bit_depth == 8) ? EB_TRUE : EB_FALSE;
 
-            if (sequence_control_set_ptr->static_config.inter_intra_compound)
+            if (sequence_control_set_ptr->static_config.inter_intra_compound == AUTO_MODE)
 #if II_COMP_FLAG
 #if INTER_INTRA_HBD
             // Set inter-intra mode      Settings
             // 0                 OFF
             // 1                 ON
-                sequence_control_set_ptr->seq_header.enable_interintra_compound =  (sequence_control_set_ptr->static_config.encoder_bit_depth == EB_10BIT &&
-                                                                                    sequence_control_set_ptr->static_config.enable_hbd_mode_decision ) ? 0:
-                                                                                   (sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 1 : 0;
+            sequence_control_set_ptr->seq_header.enable_interintra_compound =  (sequence_control_set_ptr->static_config.encoder_bit_depth == EB_10BIT &&
+                                                                                sequence_control_set_ptr->static_config.enable_hbd_mode_decision ) ? 0:
+                                                                                (sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 1 : 0;
 #else
-                sequence_control_set_ptr->seq_header.enable_interintra_compound = (sequence_control_set_ptr->static_config.encoder_bit_depth == EB_10BIT ) ? 0 :
-                                                                                  (sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 1 : 0;
+            sequence_control_set_ptr->seq_header.enable_interintra_compound = (sequence_control_set_ptr->static_config.encoder_bit_depth == EB_10BIT ) ? 0 :
+                                                                              (sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 1 : 0;
 #endif
 #endif
             else
-                sequence_control_set_ptr->seq_header.enable_interintra_compound = 0;
+                sequence_control_set_ptr->seq_header.enable_interintra_compound = sequence_control_set_ptr->static_config.inter_intra_compound;
 
 #if FILTER_INTRA_FLAG
             // Set filter intra mode      Settings
@@ -731,7 +732,7 @@ void* resource_coordination_kernel(void *input_ptr)
             // 0                 OFF: No compond mode search : AVG only
             // 1                 ON: FULL compond mode search: AVG/DIST/DIFF
             // 2                 ON: AVG/DIST/DIFF/WEDGE
-            if (sequence_control_set_ptr->static_config.compound_level > 0) {
+            if (sequence_control_set_ptr->static_config.compound_level == AUTO_MODE) {
 #if INTER_INTER_HBD
                 sequence_control_set_ptr->compound_mode = (sequence_control_set_ptr->static_config.encoder_bit_depth == EB_10BIT &&
                                                            sequence_control_set_ptr->static_config.enable_hbd_mode_decision ) ? 0:
@@ -742,7 +743,7 @@ void* resource_coordination_kernel(void *input_ptr)
 #endif
 	    }
             else
-                sequence_control_set_ptr->compound_mode = 0;
+                sequence_control_set_ptr->compound_mode = sequence_control_set_ptr->static_config.compound_level;
 
             if (sequence_control_set_ptr->compound_mode)
             {

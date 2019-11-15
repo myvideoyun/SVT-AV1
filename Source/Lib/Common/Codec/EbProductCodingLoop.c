@@ -6050,11 +6050,18 @@ void md_stage_2(
     context_ptr->md_staging_skip_full_chroma = context_ptr->target_class == CAND_CLASS_0 || context_ptr->md_staging_mode == MD_STAGING_MODE_3;
 #endif
 
+    SequenceControlSet *sequence_control_set_ptr = (SequenceControlSet*)picture_control_set_ptr->sequence_control_set_wrapper_ptr->object_ptr;
 #if REMOVE_MD_STAGE_1
-    context_ptr->md_staging_skip_rdoq = EB_TRUE;
+    if (sequence_control_set_ptr->static_config.enable_rdoq == AUTO_MODE)
+        context_ptr->md_staging_skip_rdoq = EB_TRUE;
+    else
+        context_ptr->md_staging_skip_rdoq = !sequence_control_set_ptr->static_config.enable_rdoq;
     for (fullLoopCandidateIndex = 0; fullLoopCandidateIndex < context_ptr->md_stage_1_count[context_ptr->target_class]; ++fullLoopCandidateIndex) {
 #else
-    context_ptr->md_staging_skip_rdoq = (context_ptr->md_staging_mode == MD_STAGING_MODE_2 || context_ptr->md_staging_mode == MD_STAGING_MODE_3);
+    if (sequence_control_set_ptr->static_config.enable_rdoq == AUTO_MODE)
+        context_ptr->md_staging_skip_rdoq = (context_ptr->md_staging_mode == MD_STAGING_MODE_2 || context_ptr->md_staging_mode == MD_STAGING_MODE_3);
+    else
+        context_ptr->md_staging_skip_rdoq = !sequence_control_set_ptr->static_config.enable_rdoq;
     for (fullLoopCandidateIndex = 0; fullLoopCandidateIndex < context_ptr->md_stage_2_count[context_ptr->target_class]; ++fullLoopCandidateIndex) {
 #endif
         candidateIndex = context_ptr->cand_buff_indices[context_ptr->target_class][fullLoopCandidateIndex];
@@ -6137,7 +6144,11 @@ void md_stage_3(
 #endif
         context_ptr->md_staging_skip_full_chroma = EB_FALSE;
 
-        context_ptr->md_staging_skip_rdoq = EB_FALSE;
+        SequenceControlSet *sequence_control_set_ptr = (SequenceControlSet*)picture_control_set_ptr->sequence_control_set_wrapper_ptr->object_ptr;
+        if (sequence_control_set_ptr->static_config.enable_rdoq == AUTO_MODE)
+            context_ptr->md_staging_skip_rdoq = EB_FALSE;
+        else
+            context_ptr->md_staging_skip_rdoq = !sequence_control_set_ptr->static_config.enable_rdoq;
 
         if (picture_control_set_ptr->slice_type != I_SLICE) {
             if ((candidate_ptr->type == INTRA_MODE || context_ptr->full_loop_escape == 2) && best_inter_luma_zero_coeff == 0) {
@@ -7600,14 +7611,14 @@ void md_encode_block(
         picture_control_set_ptr->parent_pcs_ptr->nsq_search_level < NSQ_SEARCH_FULL) ? EB_TRUE : EB_FALSE;
 
 #if PREDICT_NSQ_SHAPE
+    if (sequence_control_set_ptr->static_config.nsq_table == AUTO_MODE)
 #if M1_nsq
-    is_nsq_table_used = is_nsq_table_used;
+        is_nsq_table_used = is_nsq_table_used;
 #else
-    if (sequence_control_set_ptr->static_config.nsq_table)
         is_nsq_table_used = picture_control_set_ptr->parent_pcs_ptr->sc_content_detected || picture_control_set_ptr->enc_mode == ENC_M0 ? EB_FALSE : is_nsq_table_used;
-    else
-        is_nsq_table_used = EB_FALSE;
 #endif
+    else
+        is_nsq_table_used = sequence_control_set_ptr->static_config.nsq_table;
 #if ADJUST_NSQ_RANK_BASED_ON_NEIGH
     if (is_nsq_table_used) {
         if (context_ptr->blk_geom->shape == PART_N) {
@@ -7631,10 +7642,10 @@ void md_encode_block(
     }
 #endif
 #else
-    if (sequence_control_set_ptr->static_config.nsq_table)
+    if (sequence_control_set_ptr->static_config.nsq_table == AUTO_MODE)
         is_nsq_table_used = picture_control_set_ptr->enc_mode == ENC_M0 ?  EB_FALSE : is_nsq_table_used;
     else
-        is_nsq_table_used = EB_FALSE;
+        is_nsq_table_used = sequence_control_set_ptr->static_config.nsq_table;
     if (is_nsq_table_used) {
         if (context_ptr->blk_geom->shape == PART_N) {
             order_nsq_table(

@@ -1273,7 +1273,7 @@ EbErrorType signal_derivation_multi_processes_oq(
         // 0                 OFF: no transform partitioning
         // 1                 ON for INTRA blocks
 
-        if (sequence_control_set_ptr->static_config.enable_atb) {
+        if (sequence_control_set_ptr->static_config.enable_atb == AUTO_MODE) {
 
 #if ATB_10_BIT
             if (picture_control_set_ptr->enc_mode <= ENC_M1 &&  !sequence_control_set_ptr->static_config.enable_hbd_mode_decision)
@@ -1289,7 +1289,7 @@ EbErrorType signal_derivation_multi_processes_oq(
                 picture_control_set_ptr->atb_mode = 0;
 	}
 	else
-           picture_control_set_ptr->atb_mode = 0;
+           picture_control_set_ptr->atb_mode = sequence_control_set_ptr->static_config.enable_atb;
 
 #if MR_ATB
         picture_control_set_ptr->atb_mode = 1;
@@ -1316,7 +1316,7 @@ EbErrorType signal_derivation_multi_processes_oq(
 
         picture_control_set_ptr->wedge_mode = 0;
 
-        if (sequence_control_set_ptr->static_config.inter_intra_compound)
+        if (sequence_control_set_ptr->static_config.inter_intra_compound == AUTO_MODE)
 #if II_COMP_FLAG
         // inter intra pred                      Settings
         // 0                                     OFF
@@ -1325,13 +1325,13 @@ EbErrorType signal_derivation_multi_processes_oq(
             picture_control_set_ptr->enable_inter_intra = picture_control_set_ptr->slice_type != I_SLICE ? sequence_control_set_ptr->seq_header.enable_interintra_compound : 0;
 #endif
         else
-            picture_control_set_ptr->enable_inter_intra = 0;
+            picture_control_set_ptr->enable_inter_intra = sequence_control_set_ptr->static_config.inter_intra_compound;
 
         // Set compound mode      Settings
         // 0                 OFF: No compond mode search : AVG only
         // 1                 ON: compond mode search: AVG/DIST/DIFF
         // 2                 ON: AVG/DIST/DIFF/WEDGE
-        if (sequence_control_set_ptr->static_config.compound_level) {
+        if (sequence_control_set_ptr->static_config.compound_level == AUTO_MODE) {
             if (sequence_control_set_ptr->compound_mode)
                 picture_control_set_ptr->compound_mode = picture_control_set_ptr->sc_content_detected ? 0 :
                 picture_control_set_ptr->enc_mode <= ENC_M1 ? 2 : 1;
@@ -1339,7 +1339,7 @@ EbErrorType signal_derivation_multi_processes_oq(
                 picture_control_set_ptr->compound_mode = 0;
 	}
 	else
-            picture_control_set_ptr->compound_mode = 0;
+            picture_control_set_ptr->compound_mode = sequence_control_set_ptr->static_config.compound_level;
 
         // set compound_types_to_try
         if (picture_control_set_ptr->compound_mode)
@@ -1350,21 +1350,21 @@ EbErrorType signal_derivation_multi_processes_oq(
         // Set frame end cdf update mode      Settings
         // 0                                     OFF
         // 1                                     ON
-        if (sequence_control_set_ptr->static_config.frame_end_cdf_update)
+        if (sequence_control_set_ptr->static_config.frame_end_cdf_update == AUTO_MODE)
             if (picture_control_set_ptr->enc_mode == ENC_M0)
                 picture_control_set_ptr->frame_end_cdf_update_mode = 1;
             else
                 picture_control_set_ptr->frame_end_cdf_update_mode = 0;
         else
-            picture_control_set_ptr->frame_end_cdf_update_mode = 0;
+            picture_control_set_ptr->frame_end_cdf_update_mode = sequence_control_set_ptr->static_config.frame_end_cdf_update;
 
-        if (sequence_control_set_ptr->static_config.prune_unipred_me)
+        if (sequence_control_set_ptr->static_config.prune_unipred_me == AUTO_MODE)
             if (picture_control_set_ptr->sc_content_detected || picture_control_set_ptr->enc_mode == ENC_M0 || picture_control_set_ptr->enc_mode >= ENC_M4)
                 picture_control_set_ptr->prune_unipred_at_me = 0;
             else
                 picture_control_set_ptr->prune_unipred_at_me = 1;
         else
-            picture_control_set_ptr->prune_unipred_at_me = 0;
+            picture_control_set_ptr->prune_unipred_at_me = sequence_control_set_ptr->static_config.prune_unipred_me;
 
         //CHKN: Temporal MVP should be disabled for pictures beloning to 4L MiniGop preceeded by 5L miniGOP. in this case the RPS is wrong(known issue). check RPS construction for more info.
         if ((sequence_control_set_ptr->static_config.hierarchical_levels == 4 && picture_control_set_ptr->hierarchical_levels == 3) ||
