@@ -2015,7 +2015,7 @@ void SetParamBasedOnInput(SequenceControlSet *sequence_control_set_ptr)
     // Set over_boundary_block_mode     Settings
     // 0                            0: not allowed
     // 1                            1: allowed
-    if (sequence_control_set_ptr->static_config.over_bndry_blk == AUTO_MODE)
+    if (sequence_control_set_ptr->static_config.over_bndry_blk)
         if (sequence_control_set_ptr->static_config.enc_mode == ENC_M0)
             sequence_control_set_ptr->over_boundary_block_mode = 1;
         else
@@ -2023,10 +2023,10 @@ void SetParamBasedOnInput(SequenceControlSet *sequence_control_set_ptr)
     else
             sequence_control_set_ptr->over_boundary_block_mode = 0;
 
-    if (sequence_control_set_ptr->static_config.enable_mfmv == AUTO_MODE)
+    if (sequence_control_set_ptr->static_config.enable_mfmv)
         sequence_control_set_ptr->mfmv_enabled = (uint8_t)(sequence_control_set_ptr->static_config.enc_mode == ENC_M0) ? 1 : 0;
     else
-        sequence_control_set_ptr->mfmv_enabled = sequence_control_set_ptr->static_config.enable_mfmv;
+        sequence_control_set_ptr->mfmv_enabled = 0;
 
     // Set hbd_mode_decision OFF for high encode modes or bitdepth < 10
     if (sequence_control_set_ptr->static_config.enc_mode > ENC_M0 || sequence_control_set_ptr->static_config.encoder_bit_depth < 10)
@@ -2698,35 +2698,35 @@ EbErrorType eb_svt_enc_init_parameter(
     config_ptr->hierarchical_levels = 4;
     config_ptr->pred_structure = EB_PRED_RANDOM_ACCESS;
     config_ptr->disable_dlf_flag = EB_FALSE;
-    config_ptr->enable_warped_motion = AUTO_MODE;
+    config_ptr->enable_warped_motion = EB_TRUE;
     config_ptr->enable_global_motion = EB_TRUE;
-    config_ptr->enable_atb = AUTO_MODE;
-    config_ptr->enable_cdf = AUTO_MODE;
-    config_ptr->edge_skp_angle_intra = AUTO_MODE;
-    config_ptr->combine_class_12 = AUTO_MODE;
-    config_ptr->inter_intra_compound = AUTO_MODE;
-    config_ptr->fract_search_64 = AUTO_MODE;
-    config_ptr->enable_restoration_filtering = AUTO_MODE;
-    config_ptr->enable_mfmv = AUTO_MODE;
-    config_ptr->quant_fp = AUTO_MODE;
-    config_ptr->enable_redundant_blk = AUTO_MODE;
-    config_ptr->enable_trellis = AUTO_MODE;
-    config_ptr->spatial_sse_fl = AUTO_MODE;
-    config_ptr->update_cdf = AUTO_MODE;
-    config_ptr->enable_subpel = AUTO_MODE;
-    config_ptr->over_bndry_blk = AUTO_MODE;
-    config_ptr->new_nearest_comb_inject = AUTO_MODE;
-    config_ptr->nx4_4xn_parent_mv_inject = AUTO_MODE;
-    config_ptr->prune_unipred_me = AUTO_MODE;
-    config_ptr->prune_ref_rec_part = AUTO_MODE;
-    config_ptr->nsq_table = AUTO_MODE;
-    config_ptr->frame_end_cdf_update = AUTO_MODE;
-    config_ptr->enable_obmc = AUTO_MODE;
-    config_ptr->chroma_level = AUTO_MODE;
-    config_ptr->enable_rdoq = AUTO_MODE;
-    config_ptr->pred_me = AUTO_MODE;
-    config_ptr->bipred_3x3_inject = AUTO_MODE;
-    config_ptr->compound_level = AUTO_MODE;
+    config_ptr->enable_atb = EB_TRUE;
+    config_ptr->enable_cdf = EB_TRUE;
+    config_ptr->edge_skp_angle_intra = EB_TRUE;
+    config_ptr->combine_class_12 = EB_TRUE;
+    config_ptr->inter_intra_compound = EB_TRUE;
+    config_ptr->fract_search_64 = EB_TRUE;
+    config_ptr->enable_restoration_filtering = EB_TRUE;
+    config_ptr->enable_mfmv = EB_TRUE;
+    config_ptr->quant_fp = EB_TRUE;
+    config_ptr->enable_redundant_blk = EB_TRUE;
+    config_ptr->enable_trellis = EB_TRUE;
+    config_ptr->spatial_sse_fl = EB_TRUE;
+    config_ptr->update_cdf = EB_TRUE;
+    config_ptr->enable_subpel = EB_TRUE;
+    config_ptr->over_bndry_blk = EB_TRUE;
+    config_ptr->new_nearest_comb_inject = EB_TRUE;
+    config_ptr->nx4_4xn_parent_mv_inject = EB_TRUE;
+    config_ptr->prune_unipred_me = EB_TRUE;
+    config_ptr->prune_ref_rec_part = EB_TRUE;
+    config_ptr->nsq_table = EB_TRUE;
+    config_ptr->frame_end_cdf_update = EB_TRUE;
+    config_ptr->enable_obmc = EB_TRUE;
+    config_ptr->chroma_level = 0;
+    config_ptr->enable_rdoq = EB_TRUE;
+    config_ptr->pred_me = 0;
+    config_ptr->bipred_3x3_inject = EB_TRUE;
+    config_ptr->compound_level = 0;
     config_ptr->enable_filter_intra = EB_TRUE;
     config_ptr->in_loop_me_flag = EB_TRUE;
     config_ptr->ext_block_flag = EB_FALSE;

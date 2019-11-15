@@ -174,14 +174,13 @@ EbErrorType signal_derivation_me_kernel_oq(
         else
             context_ptr->me_context_ptr->fractional_search_method = FULL_SAD_SEARCH;
 
-    if (sequence_control_set_ptr->static_config.fract_search_64 == AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.fract_search_64)
         if (picture_control_set_ptr->sc_content_detected)
             context_ptr->me_context_ptr->fractional_search64x64 = EB_FALSE;
         else
             context_ptr->me_context_ptr->fractional_search64x64 = EB_TRUE;
-    }
     else
-        context_ptr->me_context_ptr->fractional_search64x64 = sequence_control_set_ptr->static_config.fract_search_64;
+        context_ptr->me_context_ptr->fractional_search64x64 = 0;
 
     // Set HME flags
     context_ptr->me_context_ptr->enable_hme_flag = picture_control_set_ptr->enable_hme_flag;
@@ -190,7 +189,7 @@ EbErrorType signal_derivation_me_kernel_oq(
     context_ptr->me_context_ptr->enable_hme_level2_flag = picture_control_set_ptr->enable_hme_level2_flag;
 
     // Set the default settings of subpel
-    if (sequence_control_set_ptr->static_config.enable_subpel == AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.enable_subpel) {
         if (picture_control_set_ptr->sc_content_detected)
             if (enc_mode <= ENC_M1)
                 context_ptr->me_context_ptr->use_subpel_flag = 1;
@@ -200,7 +199,7 @@ EbErrorType signal_derivation_me_kernel_oq(
             context_ptr->me_context_ptr->use_subpel_flag = 1;
     }
     else
-        context_ptr->me_context_ptr->use_subpel_flag = sequence_control_set_ptr->static_config.enable_subpel;
+        context_ptr->me_context_ptr->use_subpel_flag = 0;
 
     if (MR_MODE) {
         context_ptr->me_context_ptr->half_pel_mode =
@@ -293,14 +292,14 @@ EbErrorType signal_derivation_me_kernel_oq(
         else
             context_ptr->me_context_ptr->fractional_search_method = FULL_SAD_SEARCH;
 
-    if (sequence_control_set_ptr->static_config.fract_search_64 == AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.fract_search_64) {
         if (picture_control_set_ptr->sc_content_detected)
             context_ptr->me_context_ptr->fractional_search64x64 = EB_FALSE;
         else
             context_ptr->me_context_ptr->fractional_search64x64 = EB_TRUE;
     }
     else
-        context_ptr->me_context_ptr->fractional_search64x64 = sequence_control_set_ptr->static_config.fract_search_64;
+        context_ptr->me_context_ptr->fractional_search64x64 = 0;
 
     // Set HME flags
     context_ptr->me_context_ptr->enable_hme_flag = picture_control_set_ptr->enable_hme_flag;
@@ -309,7 +308,7 @@ EbErrorType signal_derivation_me_kernel_oq(
     context_ptr->me_context_ptr->enable_hme_level2_flag = picture_control_set_ptr->enable_hme_level2_flag;
 
     // Set the default settings of subpel
-    if (sequence_control_set_ptr->static_config.enable_subpel == AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.enable_subpel) {
         if (picture_control_set_ptr->sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M1)
                 context_ptr->me_context_ptr->use_subpel_flag = 1;
@@ -319,7 +318,7 @@ EbErrorType signal_derivation_me_kernel_oq(
             context_ptr->me_context_ptr->use_subpel_flag = 1;
     }
     else
-        context_ptr->me_context_ptr->use_subpel_flag = sequence_control_set_ptr->static_config.enable_subpel;
+        context_ptr->me_context_ptr->use_subpel_flag = 0;
 
     if (MR_MODE) {
         context_ptr->me_context_ptr->half_pel_mode =
@@ -476,7 +475,7 @@ EbErrorType tf_signal_derivation_me_kernel_oq(
         else
             context_ptr->me_context_ptr->fractional_search_method = FULL_SAD_SEARCH;
 
-    if (sequence_control_set_ptr->static_config.fract_search_64 == AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.fract_search_64) {
         if (picture_control_set_ptr->sc_content_detected)
             if (enc_mode <= ENC_M1)
                 context_ptr->me_context_ptr->fractional_search64x64 = EB_TRUE;
@@ -486,7 +485,7 @@ EbErrorType tf_signal_derivation_me_kernel_oq(
             context_ptr->me_context_ptr->fractional_search64x64 = EB_TRUE;
     }
     else
-        context_ptr->me_context_ptr->fractional_search64x64 = sequence_control_set_ptr->static_config.fract_search_64;
+        context_ptr->me_context_ptr->fractional_search64x64 = 0;
 
     // Set HME flags
     context_ptr->me_context_ptr->enable_hme_flag = picture_control_set_ptr->tf_enable_hme_flag;
@@ -495,7 +494,7 @@ EbErrorType tf_signal_derivation_me_kernel_oq(
     context_ptr->me_context_ptr->enable_hme_level2_flag = picture_control_set_ptr->tf_enable_hme_level2_flag;
 
     // Set the default settings of subpel
-    if (sequence_control_set_ptr->static_config.enable_subpel == AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.enable_subpel) {
         if (picture_control_set_ptr->sc_content_detected)
             if (enc_mode <= ENC_M1)
                 context_ptr->me_context_ptr->use_subpel_flag = 1;
@@ -505,7 +504,7 @@ EbErrorType tf_signal_derivation_me_kernel_oq(
             context_ptr->me_context_ptr->use_subpel_flag = 1;
     }
     else
-        context_ptr->me_context_ptr->use_subpel_flag = sequence_control_set_ptr->static_config.enable_subpel;
+        context_ptr->me_context_ptr->use_subpel_flag = 0;
 
     if (MR_MODE) {
         context_ptr->me_context_ptr->half_pel_mode =
@@ -583,7 +582,7 @@ EbErrorType tf_signal_derivation_me_kernel_oq(
         else
             context_ptr->me_context_ptr->fractional_search_method = FULL_SAD_SEARCH;
 
-    if (sequence_control_set_ptr->static_config.fract_search_64 == AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.fract_search_64) {
         if (picture_control_set_ptr->sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M1)
                 context_ptr->me_context_ptr->fractional_search64x64 = EB_TRUE;
@@ -593,7 +592,7 @@ EbErrorType tf_signal_derivation_me_kernel_oq(
             context_ptr->me_context_ptr->fractional_search64x64 = EB_TRUE;
     }
     else
-        context_ptr->me_context_ptr->fractional_search64x64 = sequence_control_set_ptr->static_config.fract_search_64;
+        context_ptr->me_context_ptr->fractional_search64x64 = 0;
 
     // Set HME flags
     context_ptr->me_context_ptr->enable_hme_flag = picture_control_set_ptr->tf_enable_hme_flag;
@@ -602,7 +601,7 @@ EbErrorType tf_signal_derivation_me_kernel_oq(
     context_ptr->me_context_ptr->enable_hme_level2_flag = picture_control_set_ptr->tf_enable_hme_level2_flag;
 
     // Set the default settings of subpel
-    if (sequence_control_set_ptr->static_config.enable_subpel == AUTO_MODE) {
+    if (sequence_control_set_ptr->static_config.enable_subpel) {
         if (picture_control_set_ptr->sc_content_detected)
             if (picture_control_set_ptr->enc_mode <= ENC_M1)
                 context_ptr->me_context_ptr->use_subpel_flag = 1;
@@ -612,7 +611,7 @@ EbErrorType tf_signal_derivation_me_kernel_oq(
             context_ptr->me_context_ptr->use_subpel_flag = 1;
     }
     else
-        context_ptr->me_context_ptr->use_subpel_flag = sequence_control_set_ptr->static_config.enable_subpel;
+        context_ptr->me_context_ptr->use_subpel_flag = 0;
 
     if (MR_MODE) {
         context_ptr->me_context_ptr->half_pel_mode =

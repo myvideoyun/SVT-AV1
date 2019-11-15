@@ -1394,10 +1394,8 @@ int32_t av1_quantize_inv_quantize(
 #endif
 
     SequenceControlSet *sequence_control_set_ptr = (SequenceControlSet*)picture_control_set_ptr->sequence_control_set_wrapper_ptr->object_ptr;
-    if (sequence_control_set_ptr->static_config.enable_rdoq == AUTO_MODE)
-        perform_rdoq = perform_rdoq && !picture_control_set_ptr->hbd_mode_decision && !bit_increment;
-    else
-	perform_rdoq = sequence_control_set_ptr->static_config.enable_rdoq;
+    perform_rdoq = perform_rdoq && !picture_control_set_ptr->hbd_mode_decision && !bit_increment;
+    perform_rdoq = perform_rdoq && sequence_control_set_ptr->static_config.enable_rdoq;
 
     // Hsan: set to FALSE until adding x86 quantize_fp
     EbBool perform_quantize_fp = picture_control_set_ptr->enc_mode == ENC_M0 ? EB_TRUE: EB_FALSE;
