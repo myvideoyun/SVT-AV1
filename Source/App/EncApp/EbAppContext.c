@@ -198,7 +198,6 @@ EbErrorType CopyConfigurationParameters(
     callback_data->eb_enc_parameters.edge_skp_angle_intra = config->edge_skp_angle_intra;
     callback_data->eb_enc_parameters.inter_intra_compound = config->inter_intra_compound;
     callback_data->eb_enc_parameters.fract_search_64 = config->fract_search_64;
-    callback_data->eb_enc_parameters.inject_global_mv = config->inject_global_mv;
     callback_data->eb_enc_parameters.enable_mfmv = config->enable_mfmv;
     callback_data->eb_enc_parameters.quant_fp = config->quant_fp;
     callback_data->eb_enc_parameters.enable_redundant_blk = config->enable_redundant_blk;

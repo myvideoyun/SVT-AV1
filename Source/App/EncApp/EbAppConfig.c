@@ -73,7 +73,6 @@
 #define EDGE_SKIP_ANGLE_INTRA_TOKEN     "-intra-edge-skp"
 #define INTER_INTRA_COMPOUND_TOKEN      "-interintra-comp"
 #define FRAC_SEARCH_64_TOKEN            "-frac-search-64"
-#define GLOBAL_MV_INJECT_TOKEN          "-global-motion-inject"
 #define MFMV_ENABLE_TOKEN               "-mfmv"
 #define QUANT_FP_TOKEN                  "-quantize-fp"
 #define REDUNDANT_BLK_TOKEN             "-redundant-blk"
@@ -278,7 +277,6 @@ static void SetClass12Flag                      (const char *value, EbConfig *cf
 static void SetEdgeSkipAngleIntraFlag           (const char *value, EbConfig *cfg) { cfg->edge_skp_angle_intra = (int8_t)strtol(value, NULL, 0);};
 static void SetInterIntraCompoundFlag           (const char *value, EbConfig *cfg) { cfg->inter_intra_compound = (int8_t)strtol(value, NULL, 0);};
 static void SetFractionalSearch64Flag           (const char *value, EbConfig *cfg) { cfg->fract_search_64 = (int8_t)strtol(value, NULL, 0);};
-static void SetInjectGlobalMVFlag               (const char *value, EbConfig *cfg) { cfg->inject_global_mv = (int8_t)strtol(value, NULL, 0);};
 static void SetEnableMfmvFlag                   (const char *value, EbConfig *cfg) { cfg->enable_mfmv = (int8_t)strtol(value, NULL, 0);};
 static void SetQuantFpFlag                      (const char *value, EbConfig *cfg) { cfg->quant_fp = (int8_t)strtol(value, NULL, 0);};
 static void SetEnableRedundantBlkFlag           (const char *value, EbConfig *cfg) { cfg->enable_redundant_blk = (int8_t)strtol(value, NULL, 0);};
@@ -452,10 +450,7 @@ config_entry_t config_entry[] = {
     { SINGLE_INPUT, INTER_INTRA_COMPOUND_TOKEN, "InterIntraCompound", SetInterIntraCompoundFlag },
     // FRACTIONAL SEARCH 64x64
     { SINGLE_INPUT, FRAC_SEARCH_64_TOKEN, "FractionalSearch64", SetFractionalSearch64Flag },
-    // GLOBAL MV INJECTION
-    { SINGLE_INPUT, GLOBAL_MV_INJECT_TOKEN, "GlobalMvInjection", SetInjectGlobalMVFlag },
     // RESTORATION
-
     { SINGLE_INPUT, RESTORATION_ENABLE_TOKEN, "RestorationFilter", SetEnableRestorationFilterFlag },
     { SINGLE_INPUT, MFMV_ENABLE_TOKEN, "Mfmv", SetEnableMfmvFlag },
     { SINGLE_INPUT, QUANT_FP_TOKEN, "QuantFp", SetQuantFpFlag },
@@ -489,8 +484,6 @@ config_entry_t config_entry[] = {
     { SINGLE_INPUT, INTER_INTRA_COMPOUND_TOKEN, "InterIntraCompound", SetInterIntraCompoundFlag },
     // FRACTIONAL SEARCH 64x64
     { SINGLE_INPUT, FRAC_SEARCH_64_TOKEN, "FractionalSearch64", SetFractionalSearch64Flag },
-    // GLOBAL MV INJECTION
-    { SINGLE_INPUT, GLOBAL_MV_INJECT_TOKEN, "GlobalMvInjection", SetInjectGlobalMVFlag },
 
     // OBMC
     { SINGLE_INPUT, OBMC_TOKEN, "Obmc", SetEnableObmcFlag },
@@ -634,7 +627,6 @@ void eb_config_ctor(EbConfig *config_ptr)
     config_ptr->edge_skp_angle_intra                 = -1;
     config_ptr->inter_intra_compound                 = -1;
     config_ptr->fract_search_64                      = -1;
-    config_ptr->inject_global_mv                     = -1;
     config_ptr->enable_restoration_filtering         = -1;
     config_ptr->enable_mfmv                          = -1;
     config_ptr->quant_fp                             = -1;
@@ -1117,11 +1109,6 @@ static EbErrorType VerifySettings(EbConfig *config, uint32_t channelNumber)
 
      if (config->fract_search_64 != 0 && config->fract_search_64 != 1 && config->fract_search_64 != -1) {
          fprintf(config->error_log_file, "Error instance %u: Invalid fractional search for 64x64 flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->fract_search_64);
-         return_error = EB_ErrorBadParameter;
-     }
-
-     if (config->inject_global_mv != 0 && config->inject_global_mv != 1 && config->inject_global_mv != -1) {
-         fprintf(config->error_log_file, "Error instance %u: Invalid global Motion Vector injection flag [0/1 or -1 for auto], your input: %d\n", channelNumber + 1, config->inject_global_mv);
          return_error = EB_ErrorBadParameter;
      }
 

@@ -288,11 +288,6 @@ typedef struct EbConfig
     int8_t                  fract_search_64;
 
     /****************************************
-     * global mv injection
-    ****************************************/
-    int8_t                  inject_global_mv;
-
-    /****************************************
      * motion field motion vector
     ****************************************/
      int8_t                enable_mfmv;

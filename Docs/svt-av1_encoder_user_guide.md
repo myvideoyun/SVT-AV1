@@ -174,7 +174,6 @@ The encoder parameters present in the `Sample.cfg` file are listed in this table
 | **EdgeSkipAngleIntra** | --intra-edge-skp | [0/1, -1 for auto] | AUTO | Enable skip angle intra based on edge, 0 = OFF, 1 = ON, -1 = AUTO|
 | **InterIntraCompound** | -interintra-comp | [0/1, -1 for auto] | AUTO | Enable inter intra compound, 0 = OFF, 1 = ON, -1 = AUTO|
 | **FractionalSearch64** | -frac-search-64 | [0/1, -1 for auto] | AUTO | Enable fractional search for 64x64, 0 = OFF, 1 = ON, -1 = AUTO|
-| **GlobalMvInjection** | -global-motion-inject | [0/1, -1 for auto] | AUTO | Enable global Motion Vector injection, 0 = OFF, 1 = ON, -1 = AUTO|
 | **Mfmv** | -mfmv | [0/1, -1 for auto] | AUTO | Enable motion field motion vector, 0 = OFF, 1 = ON, -1 = AUTO|
 | **QuantFp** | -quantize-fp | [0/1, -1 for auto] | AUTO | Enable perform quantize fp, 0 = OFF, 1 = ON, -1 = AUTO|
 | **RedundantBlock** | -redundant-blk | [0/1, -1 for auto] | AUTO | Enable redundant block, 0 = OFF, 1 = ON, -1 = AUTO|

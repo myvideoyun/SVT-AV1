@@ -245,11 +245,6 @@ typedef struct EbSvtAv1EncConfiguration
     * Default is -1. */
     int8_t                   fract_search_64;
 
-    /* global MV injection
-    *
-    * Default is -1. */
-    int8_t                   inject_global_mv;
-
     /* atb mode
     *
     * Default is -1. */
